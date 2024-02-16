@@ -10,3 +10,7 @@ class Zeyneb:
 
 class Artem:
     print('Bye')
+
+
+class Super:
+    return ("Super")
