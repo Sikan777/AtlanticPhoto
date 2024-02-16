@@ -3,3 +3,6 @@ class Test (TestCase):
 
 class Yaroslav:
     print('hello')
+
+class Artem:
+    print('Bye')
