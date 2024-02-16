@@ -3,8 +3,10 @@ class Test(TestCase):
 
 
 class Yaroslav:
-    print("hello")
-
-
+    print('hello')
+  
 class Zeyneb:
     print("Check yourself")
+
+class Artem:
+    print('Bye')
