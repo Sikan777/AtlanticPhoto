@@ -19,6 +19,7 @@ fastapi-limiter = "^0.1.6"
 libgravatar = "^1.0.4"
 qrcode = "^7.4.2"
 pillow = "^10.2.0"
+python-dotenv = "^1.0.1"
 
 
 [build-system]

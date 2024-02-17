@@ -1,8 +1,31 @@
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
+from src.database.db import get_db
+
+from src.routes import auth, users, comments, images, tags, transform
 
 
 app = FastAPI()
+app.include_router(auth.router, prefix="/api")
+app.include_router(comments.router, prefix="/api")
+app.include_router(images.router, prefix="/api")
+app.include_router(tags.router, prefix="/api")
+app.include_router(transform.router, prefix="/api")
+app.include_router(users.router, prefix="/api")
+
+#_limiter_________________
+# @app.on_event("startup")
+# async def startup():
+#     r = await redis.Redis(
+#         host=config.REDIS_DOMAIN,
+#         port=config.REDIS_PORT,
+#         db=0,
+#         password=config.REDIS_PASSWORD,
+#     )
+#     await FastAPILimiter.init(r)
+#_limiter_________________
 
 origins = ["*"]
 
@@ -16,9 +39,22 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"message": "AtlanticPhoto Application"}
+
+@app.get("/api/healthchecker")
+async def healthchecker(db: AsyncSession = Depends(get_db)):
+    try:
+        # Make request
+        result = await db.execute(text("SELECT 1"))
+        result = result.fetchone()
+        if result is None:
+            raise HTTPException(status_code=500, detail="Database is not configured correctly")
+        return {"message": "Welcome to FastAPI!"}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Error connecting to the database")
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+# @app.get("/items/{item_id}")
+# def read_item(item_id: int, q: Union[str, None] = None):
+#     return {"item_id": item_id, "q": q}
