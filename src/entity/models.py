@@ -25,8 +25,8 @@ class Tag(Base):
     updated_at: Mapped[date] = mapped_column('updated_at', DateTime, default=func.now(), onupdate=func.now(),
                                              nullable=True)
 
-    #user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=True)
-    #user: Mapped["User"] = relationship("User", backref="contacts", lazy="joined")
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=True)
+    user: Mapped["User"] = relationship("User", backref="tags", lazy="joined")
 
 # class representing the role
 class Role(enum.Enum):

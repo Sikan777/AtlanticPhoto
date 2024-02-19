@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel, Field
-#from src.schemas.users import UserResponse
+
+from src.schemas.users import UserResponse
 
 
 class TagSchema(BaseModel):
@@ -15,7 +16,7 @@ class TagResponse(BaseModel):
     name: str
     created_at: datetime | None
     updated_at: datetime | None
-    #user: UserResponse | None
+    user: UserResponse | None
 
     class Config:
         from_attributes = True
