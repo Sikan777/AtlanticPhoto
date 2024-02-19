@@ -173,4 +173,7 @@ cython_debug/
 # LSP config files
 pyrightconfig.json
 
+# add for .DS_Store
+.DS_Store
+
 # End of https://www.toptal.com/developers/gitignore/api/python
