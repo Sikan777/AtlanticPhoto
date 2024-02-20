@@ -4,13 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from src.database.db import get_db
 
-from src.routes import auth, users, comments, images, transform
+from src.routes import auth, users, comments, images, tags, transform
 
 
 app = FastAPI()
 app.include_router(auth.router, prefix="/api")
 app.include_router(comments.router, prefix="/api")
 app.include_router(images.router, prefix="/api")
+app.include_router(tags.router, prefix="/api")
 app.include_router(transform.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 
