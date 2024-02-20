@@ -16,6 +16,7 @@ class TagResponse(BaseModel):
     name: str
     created_at: datetime | None
     updated_at: datetime | None
+    user: UserResponse | None
 
     class Config:
         from_attributes = True

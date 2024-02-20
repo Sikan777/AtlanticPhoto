@@ -32,6 +32,9 @@ class Tag(Base):
         'created_at', DateTime, default=func.now(), nullable=True)
     updated_at: Mapped[date] = mapped_column(
         'updated_at', DateTime, default=func.now(), onupdate=func.now(), nullable=True)
+    
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=True)
+    user: Mapped["User"] = relationship("User", backref="contacts", lazy="joined")
 
     #Ждем pictures
     #pictures: Mapped[List["Picture"]] = relationship(secondary=picture_tag_association, back_populates='tags', lazy='joined')

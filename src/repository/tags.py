@@ -17,7 +17,7 @@ async def get_tags(skip: int, limit: int, db: AsyncSession, user: User):
     :return: A list of tags
     :doc-author: Trelent
     """
-    stmt = select(Tag).filter_by(user=user).offset(skip).limit(limit)
+    stmt = select(Tag).offset(skip).limit(limit)
     contacts = await db.execute(stmt)
     return contacts.scalars().all()
 

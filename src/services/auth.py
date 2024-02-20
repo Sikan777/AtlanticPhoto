@@ -16,12 +16,12 @@ class Auth:
     SECRET_KEY = config.SECRET_KEY
     ALGORITHM = config.ALGORITHM
 
-    cache = redis.Redis(
-        host=config.REDIS_DOMAIN,
-        port=config.REDIS_PORT,
-        db=0,
-        password=config.REDIS_PASSWORD,
-    )
+    # cache = redis.Redis(
+    #     host=config.REDIS_DOMAIN,
+    #     port=config.REDIS_PORT,
+    #     db=0,
+    #     password=config.REDIS_PASSWORD,
+    # )
 
     def verify_password(self, plain_password, hashed_password):
         """
