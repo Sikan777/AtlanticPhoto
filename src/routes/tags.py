@@ -66,6 +66,13 @@ async def create_tag(body: TagSchema, db: Session = Depends(get_db), user: User 
     :return: A tag object, which is a pydantic model
     :doc-author: Trelent
     """
+    existing_tag = await repository_tags.get_tag_by_name(db, body.name)
+    if existing_tag:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Tag with this name already exists",
+        )
+    
     return await repository_tags.create_tag(body, db, user)
     
 

@@ -16,12 +16,12 @@ class Auth:
     SECRET_KEY = config.SECRET_KEY
     ALGORITHM = config.ALGORITHM
 
-    # cache = redis.Redis(
-    #     host=config.REDIS_DOMAIN,
-    #     port=config.REDIS_PORT,
-    #     db=0,
-    #     password=config.REDIS_PASSWORD,
-    # )
+    cache = redis.Redis(
+        host=config.REDIS_DOMAIN,
+        port=config.REDIS_PORT,
+        db=0,
+        password=config.REDIS_PASSWORD,
+    )
 
     def verify_password(self, plain_password, hashed_password):
         """
@@ -142,20 +142,21 @@ class Auth:
         except JWTError as e:
             raise credentials_exception
 
-        user_hash = str(email)
-        user = self.cache.get(user_hash)
+        # user_hash = str(email)
+        # user = self.cache.get(user_hash)
 
+        # if user is None:
+        user = await repo_users.get_user_by_email(email, db)
         if user is None:
-            user = await repo_users.get_user_by_email(email, db)
-            if user is None:
-                raise credentials_exception
-            self.cache.set(user_hash, pickle.dumps(user))
-            self.cache.expire(user_hash, 300)
-            #print("User is not from cache")
-        else:
-            #print("User from cache")
-            user = pickle.loads(user)
+            raise credentials_exception
+        #     self.cache.set(user_hash, pickle.dumps(user))
+        #     self.cache.expire(user_hash, 300)
+        #     #print("User is not from cache")
+        # else:
+        #     #print("User from cache")
+        #     user = pickle.loads(user)
         return user
+        
 
    
 auth_service = Auth()

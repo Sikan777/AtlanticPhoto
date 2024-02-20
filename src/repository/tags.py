@@ -6,7 +6,7 @@ from src.schemas.tags import TagSchema
 
 
 async def get_tags(skip: int, limit: int, db: AsyncSession, user: User):
-    #stmt = select(Tag).filter_by(user=user).offset(offset).limit(limit) ###когда будут юзеры модели и прочее
+    
     """
     The get_tags function returns a list of tags.
     
@@ -23,7 +23,7 @@ async def get_tags(skip: int, limit: int, db: AsyncSession, user: User):
 
 
 async def get_tag(tag_id: int, db: AsyncSession, user: User):
-    #stmt = select(Tag).filter_by(id=tag_id, user=user)###когда будут юзеры модели и прочее
+    
     """
     The get_tag function returns a single tag from the database.
         
@@ -36,12 +36,17 @@ async def get_tag(tag_id: int, db: AsyncSession, user: User):
     :doc-author: Trelent
     """
     stmt = select(Tag).filter_by(id=tag_id, user=user)
-    contact = await db.execute(stmt)
-    return contact.scalar_one_or_none()
+    tag = await db.execute(stmt)
+    return tag.scalar_one_or_none()
+
+async def get_tag_by_name(db: AsyncSession, name):
+    stmt = select(Tag).filter_by(name=name)
+    tag = await db.execute(stmt)
+    return tag.scalar_one_or_none()
 
 
 async def create_tag(body: TagSchema, db: AsyncSession, user: User) -> Tag:
-    #tag = Tag(**body.model_dump(exclude_unset=True), user=user)###когда будут юзеры модели и прочее 
+
     """
     The create_tag function creates a new tag in the database.
     
@@ -59,7 +64,7 @@ async def create_tag(body: TagSchema, db: AsyncSession, user: User) -> Tag:
 
 
 async def remove_tag(tag_id: int, db: AsyncSession, user: User)  -> Tag | None:
-    #stmt = select(tag).filter_by(id=tag_id, user=user)###когда будут юзеры модели и прочее
+
     """
     The remove_tag function removes a tag from the database.
         
