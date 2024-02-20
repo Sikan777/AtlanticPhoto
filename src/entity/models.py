@@ -16,12 +16,12 @@ import enum
 class Base(DeclarativeBase):
     pass
 
-picture_tag_association = Table(
-    'picture_tag_association',
-    Base.metadata,
-    Column('picture_id', Integer, ForeignKey('pictures.id', ondelete="CASCADE")),
-    Column('tag_id', Integer, ForeignKey('tags.id'))
-)
+# picture_tag_association = Table(
+#     'picture_tag_association',
+#     Base.metadata,
+#     Column('picture_id', Integer, ForeignKey('pictures.id', ondelete="CASCADE")),
+#     Column('tag_id', Integer, ForeignKey('tags.id'))
+# )
 
 class Tag(Base):
     __tablename__ = "tags"
