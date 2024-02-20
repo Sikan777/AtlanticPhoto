@@ -57,6 +57,7 @@ class User(Base):
     created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now())
     updated_at: Mapped[date] = mapped_column('updated_at', DateTime, default=func.now(), onupdate=func.now())
     status: Mapped[bool] = mapped_column('status', Boolean, default=True)
+    photoloadedcount: Mapped[int] = mapped_column(Integer, nullable=False) #additional task 1
     role: Mapped[Enum] = mapped_column('role', Enum(Role), default=Role.user, nullable=True)
     
 

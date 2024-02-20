@@ -19,7 +19,9 @@ class UserResponse(BaseModel):
     username: str
     email: EmailStr
     avatar: str | None
+    photoloadedcount: int #additional task 1
 
     class Config:
         from_attributes = True
+        
 

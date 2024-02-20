@@ -108,6 +108,12 @@ async def update_avatar_url(email: str, url: str | None, db: AsyncSession) -> Us
     await db.refresh(user)
     return user
 
+#additional task 1
+async def get_user_by_username(username: str, db: AsyncSession) -> User:
+    stmt = select(User).filter_by(username=username)
+    user = await db.execute(stmt)
+    return user.scalar_one_or_none()
+
 
 # Comfirm the email of the user
 # async def new_password(email: str, new_password:str, db: AsyncSession= Depends(get_db)):
