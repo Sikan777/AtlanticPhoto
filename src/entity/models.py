@@ -25,7 +25,13 @@ picture_tag_association = Table(
 
 class Tag(Base):
     __tablename__ = "tags"
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    
+    created_at: Mapped[date] = mapped_column(
+        'created_at', DateTime, default=func.now(), nullable=True)
+    updated_at: Mapped[date] = mapped_column(
+        'updated_at', DateTime, default=func.now(), onupdate=func.now(), nullable=True)
 
     #Ждем pictures
     #pictures: Mapped[List["Picture"]] = relationship(secondary=picture_tag_association, back_populates='tags', lazy='joined')
