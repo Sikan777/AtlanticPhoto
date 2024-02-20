@@ -40,6 +40,14 @@ async def get_tag(tag_id: int, db: AsyncSession, user: User):
     return tag.scalar_one_or_none()
 
 async def get_tag_by_name(db: AsyncSession, name):
+    """
+    The get_tag_by_name function returns a tag object from the database.
+    
+    :param db: AsyncSession: Pass the database session to the function
+    :param name: Filter the tag by name
+    :return: The tag with the given name
+    :doc-author: Trelent
+    """
     stmt = select(Tag).filter_by(name=name)
     tag = await db.execute(stmt)
     return tag.scalar_one_or_none()

@@ -56,9 +56,9 @@ async def read_tag(tag_id: int, db: Session = Depends(get_db), user: User = Depe
 async def create_tag(body: TagSchema, db: Session = Depends(get_db), user: User = Depends(auth_service.get_current_user)):
     """
     The create_tag function creates a new tag in the database.
-        The function takes a TagSchema object as input and returns the created tag.
+            The function takes a TagSchema object as input and returns the created tag.
+            
         
-    
     
     :param body: TagSchema: Validate the data that is passed into the function
     :param db: Session: Pass the database session to the repository layer
