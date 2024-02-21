@@ -1,4 +1,5 @@
-from pydantic import BaseModel, EmailStr, Field
+from datetime import date
+from pydantic import BaseModel, EmailStr, Field 
 
 # Here are some shemas for responce and validation information
 
@@ -18,10 +19,11 @@ class UserResponse(BaseModel):
     id: int = 1
     username: str
     email: EmailStr
+    photoloadedcount: int = 0  #additional task 1
     avatar: str | None
-    photoloadedcount: int #additional task 1
 
     class Config:
         from_attributes = True
+        
         
 

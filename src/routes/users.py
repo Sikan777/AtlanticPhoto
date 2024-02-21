@@ -1,6 +1,8 @@
 import statistics
 from fastapi import APIRouter, Depends, HTTPException
 from src.database.db import get_db
+from src.services.auth import auth_service
+from src.entity.models import User
 from src.repository import users as repo_users
 
 from src.schemas.users import UserResponse

@@ -34,7 +34,7 @@ class Tag(Base):
         'updated_at', DateTime, default=func.now(), onupdate=func.now(), nullable=True)
     
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=True)
-    user: Mapped["User"] = relationship("User", backref="contacts", lazy="joined")
+    user: Mapped["User"] = relationship("User", backref="tags", lazy="joined")
 
     #Ждем pictures
     #pictures: Mapped[List["Picture"]] = relationship(secondary=picture_tag_association, back_populates='tags', lazy='joined')
@@ -56,8 +56,17 @@ class User(Base):
     refresh_token: Mapped[str] = mapped_column(String(255), nullable=True)
     created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now())
     updated_at: Mapped[date] = mapped_column('updated_at', DateTime, default=func.now(), onupdate=func.now())
-    status: Mapped[bool] = mapped_column('status', Boolean, default=True)
-    photoloadedcount: Mapped[int] = mapped_column(Integer, nullable=False) #additional task 1
+    status: Mapped[bool] = mapped_column('status', Boolean, default=True)    
     role: Mapped[Enum] = mapped_column('role', Enum(Role), default=Role.user, nullable=True)
+
+#additional task 1    
+class UserProfile(Base):
+    __tablename__ = 'userprofile'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now())
+    photoloadedcount: Mapped[int] = mapped_column(Integer, default=0, nullable=False) 
+    user: Mapped["User"] = relationship("User", backref="userprofile", lazy="joined")
+    
+
     
 
