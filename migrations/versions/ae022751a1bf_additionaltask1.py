@@ -30,7 +30,7 @@ def upgrade() -> None:
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.Column('status', sa.Boolean(), nullable=False),
-    sa.Column('photoloadedcount', sa.Integer(), nullable=False),
+    sa.Column('photoloadedcount', sa.Integer(), default=0, nullable=True),
     sa.Column('role', sa.Enum('admin', 'moderator', 'user', name='role'), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')

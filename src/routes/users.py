@@ -5,7 +5,7 @@ from src.services.auth import auth_service
 from src.entity.models import User
 from src.repository import users as repo_users
 
-from src.schemas.users import UserResponse
+from src.schemas.users import UserProfileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -13,8 +13,8 @@ router = APIRouter(prefix='/users', tags=['auth'])
 
 
 #additional task 1
-@router.get("/profile/{username}", response_model=UserResponse)
-async def get_user_profile(username: str, db: AsyncSession = Depends(get_db)):
+@router.get("/profile/{username}", response_model=UserProfileResponse)
+async def get_user_profile(username: str, db: AsyncSession = Depends(get_db), user: User = Depends(auth_service.get_current_user)):
     """
     Получение профиля пользователя по его уникальному username.
 
@@ -22,7 +22,7 @@ async def get_user_profile(username: str, db: AsyncSession = Depends(get_db)):
     :param db: AsyncSession: Сессия базы данных
     :return: UserProfileResponse: Информация о профиле пользователя
     """
-    user = await repo_users.get_user_by_username(username, db)
+    user = await repo_users.get_user_by_username(username, db, user)
     if user is None:
         raise HTTPException(status_code=statistics.HTTP_404_NOT_FOUND, detail="User not found")
     # Здесь можно добавить логику для получения другой информации о пользователе, такой как количество загруженных фотографий и т. д.

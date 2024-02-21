@@ -109,8 +109,8 @@ async def update_avatar_url(email: str, url: str | None, db: AsyncSession) -> Us
     return user
 
 #additional task 1
-async def get_user_by_username(username: str, db: AsyncSession) -> User:
-    stmt = select(User).filter_by(username=username)
+async def get_user_by_username(username: str, db: AsyncSession, user: User) -> User:
+    stmt = select(User).filter_by(username=username, user=user)
     user = await db.execute(stmt)
     return user.scalar_one_or_none()
 

@@ -64,7 +64,7 @@ class UserProfile(Base):
     __tablename__ = 'userprofile'
     id: Mapped[int] = mapped_column(primary_key=True)
     created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now())
-    photoloadedcount: Mapped[int] = mapped_column(Integer, default=0, nullable=False) 
+    photoloadedcount: Mapped[int] = mapped_column(Integer, nullable=False) 
     user: Mapped["User"] = relationship("User", backref="userprofile", lazy="joined")
     
 
