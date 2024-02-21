@@ -1,5 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 
+from src.entity.models import Role # Богдан Імпортую з моделей ролі для Юзерів
+from typing import Optional
 # Here are some shemas for responce and validation information
 
 class UserSchema(BaseModel):
@@ -19,7 +21,18 @@ class UserResponse(BaseModel):
     username: str
     email: EmailStr
     avatar: str | None
+    role: Role          #21.02.2024 Богдан
+    picture_count: Optional[int]
+    created_at: datetime
 
     class Config:
         from_attributes = True
+
+# Цей код визначає модель Pydantic для представлення спрощених даних користувача, включаючи їх повне ім'я, електронну пошту, URL або шлях до аватару, кількість зображень, які належать користувачеві, а також дату та час їх створення.
+class AnotherUsers(BaseModel):
+    full_name: str
+    email: EmailStr
+    avatar: str
+    picture_count: Optional[int]
+    created_at: datetime
 

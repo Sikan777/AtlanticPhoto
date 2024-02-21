@@ -40,7 +40,7 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = 
     The login function is used to authenticate a user.
         It takes in the email and password of the user, verifies that they are correct,
         and then returns an access token for future requests.
-    
+
     :param body: OAuth2PasswordRequestForm: Get the username and password from the request body
     :param db: AsyncSession: Pass the database session to the function
     :return: A dictionary with the access token, refresh token and the type of token

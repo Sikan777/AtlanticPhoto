@@ -2,7 +2,8 @@
 name = "test-project"
 version = "0.1.0"
 description = ""
-authors = ["Sikan777 <sikanbog@gmail.com>"]
+authors = ["Sikan777 <sikanbog@gmail.com>", ]
+
 readme = "README.md"
 
 [tool.poetry.dependencies]
