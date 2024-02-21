@@ -30,6 +30,7 @@ async def signup(body: UserSchema, bt:BackgroundTasks,request: Request, db: Asyn
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=messages.ACCOUNT_EXIST)
     body.password = auth_service.get_password_hash(body.password)
     new_user = await repo_users.create_user(body, db)
+    # new_user_profile = await repo_users.create_user_profile(body, db)
     #bt.add_task(send_email, new_user.email, new_user.username, str(request.base_url))
     return new_user
 

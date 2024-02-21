@@ -27,6 +27,8 @@ class UserResponse(BaseModel):
 class UserProfileResponse(BaseModel):
     username: str
     photoloadedcount: int = 0  #additional task 1
+    
+    
     class Config:
         from_attributes = True
     

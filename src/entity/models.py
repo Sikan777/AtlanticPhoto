@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, DateTime, func, Boolean, Enum, Table, Column
+from sqlalchemy import String, Integer, CheckConstraint, ForeignKey, DateTime, UniqueConstraint, func, Boolean, Enum, Table, Column
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.sql.sqltypes import Date
 from datetime import date
@@ -58,14 +58,20 @@ class User(Base):
     updated_at: Mapped[date] = mapped_column('updated_at', DateTime, default=func.now(), onupdate=func.now())
     status: Mapped[bool] = mapped_column('status', Boolean, default=True)    
     role: Mapped[Enum] = mapped_column('role', Enum(Role), default=Role.user, nullable=True)
+    
 
 #additional task 1    
 class UserProfile(Base):
     __tablename__ = 'userprofile'
     id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String, nullable=True)
     created_at: Mapped[date] = mapped_column('created_at', DateTime, default=func.now())
-    photoloadedcount: Mapped[int] = mapped_column(Integer, nullable=False) 
+    photoloadedcount: Mapped[int] = mapped_column(Integer, default=0, nullable=False) 
+    
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'), nullable=True)
     user: Mapped["User"] = relationship("User", backref="userprofile", lazy="joined")
+
+
     
 
     

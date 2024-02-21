@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
 from src.database.db import get_db
-from src.entity.models import User
+from src.entity.models import User, UserProfile
 from src.schemas.users import UserSchema
 from libgravatar import Gravatar
 from sqlalchemy import func
@@ -48,7 +48,13 @@ async def create_user(body: UserSchema, db: AsyncSession = Depends(get_db)):
         session.add(new_user)
         await session.commit()
         await session.refresh(new_user) 
+        # Create corresponding entry in userprofile table
+        new_profile = UserProfile(user_id=new_user.id, username=new_user.username, created_at=new_user.created_at, photoloadedcount=0)
+        session.add(new_profile)
+        await session.commit()
+        
         return new_user
+    
 
 # Update the refresh token
 async def update_token(user: User, token: str | None, db: AsyncSession):
@@ -110,7 +116,7 @@ async def update_avatar_url(email: str, url: str | None, db: AsyncSession) -> Us
 
 #additional task 1
 async def get_user_by_username(username: str, db: AsyncSession, user: User) -> User:
-    stmt = select(User).filter_by(username=username, user=user)
+    stmt = select(UserProfile).filter_by(username=username, user=user)
     user = await db.execute(stmt)
     return user.scalar_one_or_none()
 
