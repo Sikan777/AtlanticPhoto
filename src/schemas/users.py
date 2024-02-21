@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, Field
-
+from datetime import datetime
 from src.entity.models import Role # Богдан Імпортую з моделей ролі для Юзерів
 from typing import Optional
 # Here are some shemas for responce and validation information

@@ -6,20 +6,9 @@ from src.entity.models import User, Role
 from src.repository import users as repositories_users
 from src.schemas.users import UserResponse, UserUpdate, AnotherUsers
 from src.services.auth import auth_service
-from src.services.cloudstore import CloudService
+
 
 router = APIRouter(prefix="/users", tags=["users"])
-
-
-@router.patch("/avatar", response_model=UserResponse)
-async def get_user_avatar(
-        file: UploadFile = File(),
-        user: User = Depends(auth_service.get_current_user),
-        db: AsyncSession = Depends(get_db),
-):
-    res_url, public_id = await CloudService.upload_picture(user.id, file, f'AntlanticPhoto/user_{user.id}/avatar')
-    user = await repositories_users.update_avatar(user.full_name, res_url, db, public_id)
-    return user
 
 
 @router.get("/me", response_model=UserResponse)
