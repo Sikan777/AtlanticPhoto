@@ -48,10 +48,13 @@ async def create_user(body: UserSchema, db: AsyncSession = Depends(get_db)):
         session.add(new_user)
         await session.commit()
         await session.refresh(new_user) 
+        
+        # Adding functionality when user created to create his profile form with his simple data. 
         # Create corresponding entry in userprofile table
         new_profile = UserProfile(user_id=new_user.id, username=new_user.username, created_at=new_user.created_at, photoloadedcount=0)
         session.add(new_profile)
         await session.commit()
+        await session.refresh(new_profile)
         
         return new_user
     
