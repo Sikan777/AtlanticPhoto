@@ -30,9 +30,13 @@ class UserResponse(BaseModel):
 
 # Цей код визначає модель Pydantic для представлення спрощених даних користувача, включаючи їх повне ім'я, електронну пошту, URL або шлях до аватару, кількість зображень, які належать користувачеві, а також дату та час їх створення.
 class AnotherUsers(BaseModel):
-    full_name: str
+    username: str
     email: EmailStr
     avatar: str
     picture_count: Optional[int]
     created_at: datetime
 
+class UserUpdate(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
