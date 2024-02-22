@@ -93,12 +93,13 @@ async def logout(credentials: HTTPAuthorizationCredentials = Depends(get_refresh
     token= credentials.credentials
     print(token)
     email = await auth_service.decode_refresh_token(token)
-    print(email)
+    print("here is email")
+    #print(email)
     user = await repo_users.get_user_by_email(email, db)
     print(user.status)
     if not user.status:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.ALREADY_LOGGED_OUT)  
     
-    await repo_users.delete_access_token(user, db)
+    await repo_users.delete_access_token(email, db)
     return {"message":"Logout Successfully"} 
 
