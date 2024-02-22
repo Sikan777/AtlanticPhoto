@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from src.schemas.users import UserResponse
 
-
+#add images
 class CommentBase(BaseModel):
     content: str = Field(..., max_length=255)
 
@@ -26,4 +26,4 @@ class CommentResponse(BaseModel):
     user: Optional[UserResponse]
 
     class Config:
-        orm_mode = True
+        from_attributes = True

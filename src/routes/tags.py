@@ -8,34 +8,15 @@ from src.entity.models import User
 from src.schemas.tags import TagSchema, TagResponse
 from src.repository import tags as repository_tags
 
-router = APIRouter(prefix='/tags', tags=["tags"])
-
-
-@router.get("/", response_model=List[TagResponse])
-async def read_tags(skip: int = 0, limit: int = 5, db: Session = Depends(get_db),
-                    user: User = Depends(auth_service.get_current_user)):
-    """
-    The read_tags function returns a list of tags.
-            ---
-            get:
-              summary: Returns a list of tags.
-              description: Get all the available tags in the database, with pagination support (skip and limit).
-              responses:
-                &quot;200&quot;:  # HTTP status code 200 means OK
-
-    :param skip: int: Skip the first n tags
-    :param limit: int: Limit the number of tags returned by the function
-    :param db: Session: Pass the database session to the repository layer
-    :param user: User: Pass the current user to the repository layer
-    :return: A list of tags
-    :doc-author: Trelent
-    """
-    tags = await repository_tags.get_tags(skip, limit, db, user)
-    return tags
+router = APIRouter(prefix="/tags", tags=["tags"])
 
 
 @router.get("/{tag_id}", response_model=TagResponse)
-async def read_tag(tag_id: int, db: Session = Depends(get_db), user: User = Depends(auth_service.get_current_user)):
+async def read_tag(
+    tag_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(auth_service.get_current_user),
+):
     """
     The read_tag function returns a single tag from the database.
         The function takes in an integer as its argument, which is the ID of the tag to be returned.
@@ -49,13 +30,19 @@ async def read_tag(tag_id: int, db: Session = Depends(get_db), user: User = Depe
     """
     tag = await repository_tags.get_tag(tag_id, db, user)
     if tag is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tag not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Tag not found"
+        )
     return tag
 
 
 @router.post("/", response_model=TagResponse)
-async def create_tag(body: TagSchema, db: Session = Depends(get_db),
-                     user: User = Depends(auth_service.get_current_user)):
+async def create_tag(
+    body: TagSchema,
+    db: Session = Depends(get_db),
+    limit: int = 5,
+    user: User = Depends(auth_service.get_current_user),
+):
     """
     The create_tag function creates a new tag in the database.
             The function takes a TagSchema object as input and returns the created tag.
@@ -75,11 +62,15 @@ async def create_tag(body: TagSchema, db: Session = Depends(get_db),
             detail="Tag with this name already exists",
         )
 
-    return await repository_tags.create_tag(body, db, user)
+    return await repository_tags.create_tag(body, db, user, limit)
 
 
 @router.delete("/{tag_id}", response_model=TagResponse)
-async def remove_tag(tag_id: int, db: Session = Depends(get_db), user: User = Depends(auth_service.get_current_user)):
+async def remove_tag(
+    tag_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(auth_service.get_current_user),
+):
     """
     The remove_tag function removes a tag from the database.
         Args:
@@ -94,5 +85,7 @@ async def remove_tag(tag_id: int, db: Session = Depends(get_db), user: User = De
     """
     tag = await repository_tags.remove_tag(tag_id, db, user)
     if tag is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tag not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Tag not found"
+        )
     return tag

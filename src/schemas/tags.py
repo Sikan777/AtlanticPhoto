@@ -3,6 +3,7 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 from src.schemas.users import UserResponse
+#add images and bind
 
 
 class TagSchema(BaseModel):

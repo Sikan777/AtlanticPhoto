@@ -77,7 +77,9 @@ async def create_image(file: str, body: ImageSchema, db: AsyncSession, user: Use
 
 
 # this is used to update an image
-async def update_image(image_id: int, body: ImageUpdateSchema, db: AsyncSession, user: User):
+async def update_image(
+    image_id: int, body: ImageUpdateSchema, db: AsyncSession, user: User
+):
     """
     The update_image function updates the description of an image.
 

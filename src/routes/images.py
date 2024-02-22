@@ -13,7 +13,7 @@ import cloudinary
 import cloudinary.uploader
 from src.conf.config import config
 
-router = APIRouter(prefix='/images', tags=['images'])
+router = APIRouter(prefix="/images", tags=["images"])
 
 cloudinary.config(
     cloud_name=config.CLD_NAME,
@@ -26,9 +26,17 @@ access_to_route_all = RoleAccess([Role.admin, Role.moderator])
 
 
 # this is used to get all contacts - for user
-@router.get("/", response_model=list[ImageResponse], dependencies=[Depends(RateLimiter(times=10, seconds=60))])
-async def get_images(limit: int = Query(10, ge=10, le=500), offset: int = Query(0, ge=0),
-                     db: AsyncSession = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
+@router.get(
+    "/",
+    response_model=list[ImageResponse],
+    dependencies=[Depends(RateLimiter(times=10, seconds=60))],
+)
+async def get_images(
+    limit: int = Query(10, ge=10, le=500),
+    offset: int = Query(0, ge=0),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
+):
     """
     The get_images function returns a list of images.
 
@@ -46,10 +54,21 @@ async def get_images(limit: int = Query(10, ge=10, le=500), offset: int = Query(
     return images
 
 
+# insert checking to othersalembic init
+
+
 # this function is used to get all contacts
-@router.get("/all", response_model=list[ImageResponse], dependencies=[Depends(access_to_route_all)])
-async def get_all_images(limit: int = Query(10, ge=10, le=500), offset: int = Query(0, ge=0),
-                         db: AsyncSession = Depends(get_db), user: User = Depends(auth_service.get_current_user)):
+@router.get(
+    "/all",
+    response_model=list[ImageResponse],
+    dependencies=[Depends(access_to_route_all)],
+)
+async def get_all_images(
+    limit: int = Query(10, ge=10, le=500),
+    offset: int = Query(0, ge=0),
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(auth_service.get_current_user),
+):
     """
     The get_all_images function returns a list of all images in the database.
         The limit and offset parameters are used to paginate the results.
@@ -70,9 +89,16 @@ async def get_all_images(limit: int = Query(10, ge=10, le=500), offset: int = Qu
 
 
 # this is used to get only 1 image by the id
-@router.get("/{image_id}", response_model=ImageResponse, dependencies=[Depends(RateLimiter(times=10, seconds=60))])
-async def get_image(image_id: int = Path(ge=1), db: AsyncSession = Depends(get_db),
-                    current_user: User = Depends(auth_service.get_current_user)):
+@router.get(
+    "/{image_id}",
+    response_model=ImageResponse,
+    dependencies=[Depends(RateLimiter(times=10, seconds=60))],
+)
+async def get_image(
+    image_id: int = Path(ge=1),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
+):
     """
     The get_image function returns a contact by ID.
 
@@ -89,10 +115,18 @@ async def get_image(image_id: int = Path(ge=1), db: AsyncSession = Depends(get_d
 
 
 # this is used to create one new image
-@router.post("/", response_model=ImageResponse, status_code=status.HTTP_201_CREATED,
-             dependencies=[Depends(RateLimiter(times=10, seconds=60))])
-async def create_image(file: UploadFile = File(), body: ImageSchema = Depends(ImageSchema),
-                       db: AsyncSession = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
+@router.post(
+    "/",
+    response_model=ImageResponse,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(RateLimiter(times=10, seconds=60))],
+)
+async def create_image(
+    file: UploadFile = File(),
+    body: ImageSchema = Depends(ImageSchema),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
+):
     """
     The create_image function creates a new image in the database.
         The function takes an ImageSchema object as input, and returns an ImageResponse object.
@@ -117,8 +151,12 @@ async def create_image(file: UploadFile = File(), body: ImageSchema = Depends(Im
 
 # this is used to update existed contact
 @router.patch("/{image_id}", dependencies=[Depends(RateLimiter(times=10, seconds=60))])
-async def update_image(body: ImageUpdateSchema, image_id: int = Path(ge=1), db: AsyncSession = Depends(get_db),
-                       current_user: User = Depends(auth_service.get_current_user)):
+async def update_image(
+    body: ImageUpdateSchema,
+    image_id: int = Path(ge=1),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
+):
     """
     The update_image function updates an image in the database.
         It takes a contact_id and body as input, and returns the updated image.
@@ -138,10 +176,16 @@ async def update_image(body: ImageUpdateSchema, image_id: int = Path(ge=1), db: 
 
 
 # this is used to delete existed contact by the id
-@router.delete("/{image_id}", status_code=status.HTTP_204_NO_CONTENT,
-               dependencies=[Depends(RateLimiter(times=10, seconds=60))])
-async def delete_image(image_id: int = Path(ge=1), db: AsyncSession = Depends(get_db),
-                       current_user: User = Depends(auth_service.get_current_user)):
+@router.delete(
+    "/{image_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(RateLimiter(times=10, seconds=60))],
+)
+async def delete_image(
+    image_id: int = Path(ge=1),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
+):
     """
     The delete_image function deletes an image from the database.
         The function takes in a Path parameter of image_id, which is the id of the image to be deleted.

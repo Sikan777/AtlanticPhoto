@@ -1,5 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks, Request
-from fastapi.security import OAuth2PasswordRequestForm, HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import (
+    OAuth2PasswordRequestForm,
+    HTTPAuthorizationCredentials,
+    HTTPBearer,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.db import get_db
 from src.repository import users as repo_users
@@ -8,13 +12,20 @@ from src.services.auth import auth_service
 from starlette.responses import JSONResponse
 from src.conf import messages
 
-router = APIRouter(prefix='/auth', tags=['auth'])
+router = APIRouter(prefix="/auth", tags=["auth"])
 get_refresh_token = HTTPBearer()
 
 
 # Use for signup
-@router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def signup(body: UserSchema, bt: BackgroundTasks, request: Request, db: AsyncSession = Depends(get_db)):
+@router.post(
+    "/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
+async def signup(
+    body: UserSchema,
+    bt: BackgroundTasks,
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+):
     """
     The signup function creates a new user in the database.
         It takes a UserSchema object as input, and returns the newly created user.
@@ -28,7 +39,9 @@ async def signup(body: UserSchema, bt: BackgroundTasks, request: Request, db: As
     """
     exist_user = await repo_users.get_user_by_email(body.email, db)
     if exist_user:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=messages.ACCOUNT_EXIST)
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=messages.ACCOUNT_EXIST
+        )
     body.password = auth_service.get_password_hash(body.password)
     new_user = await repo_users.create_user(body, db)
     # bt.add_task(send_email, new_user.email, new_user.username, str(request.base_url))
@@ -37,7 +50,9 @@ async def signup(body: UserSchema, bt: BackgroundTasks, request: Request, db: As
 
 # Use for login
 @router.post("/login", response_model=TokenSchema)
-async def login(body: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)):
+async def login(
+    body: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_db)
+):
     """
     The login function is used to authenticate a user.
         It takes in the email and password of the user, verifies that they are correct,
@@ -49,24 +64,32 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = 
     """
     user = await repo_users.get_user_by_email(body.username, db)
     if user is None:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail=messages.INVALID_EMAIL)  # sometimes it is better to hide error
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.INVALID_EMAIL
+        )  # sometimes it is better to hide error
     # if not user.status:
     # raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.EMAIL_NOT_CONFIRMED)
     if not auth_service.verify_password(body.password, user.password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail=messages.INVALID_PASSWORD)  # sometimes it is better to hide error
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.INVALID_PASSWORD
+        )  # sometimes it is better to hide error
     # Generate JWT
     access_token = await auth_service.create_access_token(data={"sub": user.email})
     refresh_token = await auth_service.create_refresh_token(data={"sub": user.email})
     await repo_users.update_token(user, refresh_token, db)
-    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+    }
 
 
 # Use for get a refresh token
-@router.get('/refresh_token', response_model=TokenSchema)
-async def refresh_token(credentials: HTTPAuthorizationCredentials = Depends(get_refresh_token),
-                        db: AsyncSession = Depends(get_db)):
+@router.get("/refresh_token", response_model=TokenSchema)
+async def refresh_token(
+    credentials: HTTPAuthorizationCredentials = Depends(get_refresh_token),
+    db: AsyncSession = Depends(get_db),
+):
     """
     The refresh_token function is used to refresh the access token.
         The function takes in a refresh token and returns an access_token,
@@ -83,17 +106,25 @@ async def refresh_token(credentials: HTTPAuthorizationCredentials = Depends(get_
     user = await repo_users.get_user_by_email(email, db)
     if user.refresh_token != token:
         await repo_users.update_token(user, None, db)
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.INVALID_REF_TOKEN)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.INVALID_REF_TOKEN
+        )
 
     access_token = await auth_service.create_access_token(data={"sub": email})
     refresh_token = await auth_service.create_refresh_token(data={"sub": email})
     await repo_users.update_token(user, refresh_token, db)
-    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+    }
 
 
-@router.post('/logout')
-async def logout(credentials: HTTPAuthorizationCredentials = Depends(get_refresh_token),
-                 db: AsyncSession = Depends(get_db)):
+@router.post("/logout")
+async def logout(
+    credentials: HTTPAuthorizationCredentials = Depends(get_refresh_token),
+    db: AsyncSession = Depends(get_db),
+):
     token = credentials.credentials
     print(token)
     email = await auth_service.decode_refresh_token(token)
@@ -102,7 +133,9 @@ async def logout(credentials: HTTPAuthorizationCredentials = Depends(get_refresh
     user = await repo_users.get_user_by_email(email, db)
     print(user.status)
     if not user.status:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.ALREADY_LOGGED_OUT)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail=messages.ALREADY_LOGGED_OUT
+        )
 
     await repo_users.delete_access_token(email, db)
     return {"message": "Logout Successfully"}

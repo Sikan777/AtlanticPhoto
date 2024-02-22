@@ -9,7 +9,7 @@ from src.services.auth import auth_service
 from unittest.mock import MagicMock  # temporary
 from io import BytesIO
 
-router = APIRouter(prefix="/transform", tags=["auth"])
+router = APIRouter(prefix="/transform", tags=["transform"])
 Image = MagicMock()  # temporary
 
 

@@ -2,10 +2,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from unittest.mock import MagicMock  # temporary
 from qrcode import make as making_qr
-from src.entity.models import TransformedPic, User, Role
-from src.services.cloudconnect import CloudConnect, input_error  # our decorator, converts exceptions into httpexceptions
-
-Image = MagicMock()  # temporary
+from src.entity.models import TransformedPic, User, Role, Image
+from src.services.cloudconnect import (
+    CloudConnect,
+    input_error,
+)  # our decorator, converts exceptions into httpexceptions
 
 
 class TransformClass:
