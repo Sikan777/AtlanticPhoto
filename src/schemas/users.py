@@ -1,5 +1,9 @@
+import datetime
+from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 
+
+from src.entity.models import Role
 # Here are some shemas for responce and validation information
 
 class UserSchema(BaseModel):

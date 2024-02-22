@@ -64,7 +64,7 @@ class User(Base):
 
 
 class Comment(Base):
-    tablename = 'comments'
+    __tablename__ = 'comments'
     id: Mapped[int] = mapped_column(primary_key=True)
 
     # photo_id: Mapped[int] = mapped_column(Integer, ForeignKey('photos.id'))#commented
