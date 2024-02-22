@@ -165,12 +165,15 @@ cython_debug/
 
 ### Python Patch ###
 # Poetry local configuration file - https://python-poetry.org/docs/configuration/#local-configuration
-poetry.toml
+#poetry.toml
 
 # ruff
 .ruff_cache/
 
 # LSP config files
 pyrightconfig.json
+
+# add for .DS_Store
+.DS_Store
 
 # End of https://www.toptal.com/developers/gitignore/api/python

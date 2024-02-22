@@ -6,7 +6,7 @@ authors = ["Sikan777 <sikanbog@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 fastapi = "^0.109.2"
 uvicorn = "^0.27.1"
 sqlalchemy = "^2.0.27"
@@ -20,7 +20,17 @@ libgravatar = "^1.0.4"
 qrcode = "^7.4.2"
 pillow = "^10.2.0"
 setuptools = "^69.1.0"
+python-dotenv = "^1.0.1"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+cloudinary = "^1.38.0"
+pydantic = {extras = ["email"], version = "^2.6.1"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+greenlet = "^3.0.3"
 
+
+[tool.poetry.group.test.dependencies]
+pytest = "^8.0.1"
+httpx = "^0.26.0"
 
 [build-system]
 requires = ["poetry-core"]
