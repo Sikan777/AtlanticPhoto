@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from src.database.db import get_db
-
+import redis.asyncio as redis
+from fastapi_limiter import FastAPILimiter
 from src.routes import auth, users, comments, images, tags, transform
-
+from src.conf.config import config
 
 app = FastAPI()
 app.include_router(auth.router, prefix="/api")
@@ -16,15 +17,15 @@ app.include_router(transform.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 
 #_limiter_________________
-# @app.on_event("startup")
-# async def startup():
-#     r = await redis.Redis(
-#         host=config.REDIS_DOMAIN,
-#         port=config.REDIS_PORT,
-#         db=0,
-#         password=config.REDIS_PASSWORD,
-#     )
-#     await FastAPILimiter.init(r)
+@app.on_event("startup")
+async def startup():
+    r = await redis.Redis(
+        host=config.REDIS_DOMAIN,
+        port=config.REDIS_PORT,
+        db=0,
+        password=config.REDIS_PASSWORD,
+    )
+    await FastAPILimiter.init(r)
 #_limiter_________________
 
 origins = ["*"]
@@ -55,6 +56,3 @@ async def healthchecker(db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Error connecting to the database")
 
 
-# @app.get("/items/{item_id}")
-# def read_item(item_id: int, q: Union[str, None] = None):
-#     return {"item_id": item_id, "q": q}

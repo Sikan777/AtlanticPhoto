@@ -24,6 +24,9 @@ python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 cloudinary = "^1.38.0"
 pydantic = {extras = ["email"], version = "^2.6.1"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+greenlet = "^3.0.3"
+setuptools = "^69.1.0"
+requests = "^2.31.0"
 
 
 [tool.poetry.group.test.dependencies]
