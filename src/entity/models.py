@@ -23,7 +23,7 @@ class Base(DeclarativeBase):
     pass
 
 
-picture_association = Table(
+image_association = Table(
     "image_tag_association",
     Base.metadata,
     Column("image_id", Integer, ForeignKey("images.id", ondelete="CASCADE")),
@@ -65,8 +65,8 @@ class Image(Base):
         "updated_at", DateTime, default=func.now(), onupdate=func.now(), nullable=True
     )
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
-    user: Mapped["User"] = relationship("User", backref="todos", lazy="joined")
-    tags = relationship("Tag", secondary=picture_association, back_populates="images")
+    user: Mapped["User"] = relationship("User", backref="image", lazy="joined")
+    tags:Mapped[List["Tag"]] = relationship("Tag", secondary=image_association, back_populates="images")
     comments: Mapped[List["Comment"]] = relationship(
         back_populates="image", cascade="all, delete", lazy="joined"
     )
