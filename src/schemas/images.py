@@ -9,7 +9,7 @@ from src.schemas.users import UserResponse
 
 class ImageSchema(BaseModel):
     description: str = Field(min_length=3, max_length=150)
-    # image: str = Field(min_length=3, max_length=255)
+    tags:Optional[str] = Field(default=None)
 
 
 class ImageUpdateSchema(ImageSchema):
