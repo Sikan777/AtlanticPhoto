@@ -6,6 +6,7 @@ from src.schemas.users import UserResponse
 
 # Here are some shemas for validation of input information
 
+
 class ImageSchema(BaseModel):
     description: str = Field(min_length=3, max_length=150)
     # image: str = Field(min_length=3, max_length=255)
@@ -23,5 +24,6 @@ class ImageResponse(BaseModel):
     updated_at: datetime | None
     user: UserResponse | None
 
+    # add tags and comments
     class Config:
         from_attributes = True

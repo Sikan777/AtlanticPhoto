@@ -25,11 +25,8 @@ cloudinary = "^1.38.0"
 pydantic = {extras = ["email"], version = "^2.6.1"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 greenlet = "^3.0.3"
-<<<<<<< HEAD
-=======
 setuptools = "^69.1.0"
 requests = "^2.31.0"
->>>>>>> Ending_22.02.2024
 
 
 [tool.poetry.group.test.dependencies]

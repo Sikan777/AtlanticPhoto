@@ -1,12 +1,13 @@
 from typing import List
 
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, Query, status
 from sqlalchemy.orm import Session
 from src.services.auth import auth_service
 from src.database.db import get_db
 from src.entity.models import User
 from src.schemas.tags import TagSchema, TagResponse
 from src.repository import tags as repository_tags
+from src.repository import images as repository_images
 
 router = APIRouter(prefix="/tags", tags=["tags"])
 
@@ -39,8 +40,9 @@ async def read_tag(
 @router.post("/", response_model=TagResponse)
 async def create_tag(
     body: TagSchema,
+    image_id: int, #__23/02 ending for relation between image and tags
     db: Session = Depends(get_db),
-    limit: int = 5,
+    limit: int = Query(ge=1, le=5), #__23/02 ending for limit of tags
     user: User = Depends(auth_service.get_current_user),
 ):
     """
@@ -55,14 +57,32 @@ async def create_tag(
     :return: A tag object, which is a pydantic model
     :doc-author: Trelent
     """
+    #__23/02 ending for limit of tags 
+    existing_tag_count = await repository_tags.get_tag_count(db)
+    if existing_tag_count >= limit:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot create more than {limit} tags",
+        )
+    #__23/02 ending for limit of tags_____________________________|
+    
     existing_tag = await repository_tags.get_tag_by_name(db, body.name)
     if existing_tag:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Tag with this name already exists",
         )
+    
+    #__23/02 ending for relation between image and tags    
+    existing_image = await repository_images.get_image(image_id, db, user)
+    if not existing_image:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Image with id {image_id} not found",
+        )
+    #__23/02 ending for relation between image and tags________________|    
 
-    return await repository_tags.create_tag(body, db, user, limit)
+    return await repository_tags.create_tag(body, db, existing_image, user)
 
 
 @router.delete("/{tag_id}", response_model=TagResponse)

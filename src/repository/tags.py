@@ -1,4 +1,4 @@
-from sqlalchemy import select, and_
+from sqlalchemy import func, select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.entity.models import Tag, User, Image
@@ -36,8 +36,19 @@ async def get_tag_by_name(db: AsyncSession, name):
     tag = await db.execute(stmt)
     return tag.scalar_one_or_none()
 
+async def get_tag_count(db: AsyncSession) -> int:
+    """
+    Return the total count of tags in the database.
 
-async def create_tag(body: TagSchema, db: AsyncSession, user: User, limit: int) -> Tag:
+    :param db: AsyncSession: Database session object
+    :return: Total count of tags
+    """
+    count_query = select(func.count(Tag.id))
+    result = await db.execute(count_query)
+    return result.scalar()
+
+
+async def create_tag(body: TagSchema, db: AsyncSession, existing_image, user: User) -> Tag:
     """
     The create_tag function creates a new tag in the database.
 
@@ -48,11 +59,12 @@ async def create_tag(body: TagSchema, db: AsyncSession, user: User, limit: int) 
     :doc-author: Trelent
     """
 
-    # limit
-    tag = Tag(**body.model_dump(exclude_unset=True), user=user)
+    tag = Tag(**body.model_dump(exclude_unset=True), user=user, images=existing_image)
+    
     db.add(tag)
     await db.commit()
     await db.refresh(tag)
+    
     return tag
 
 
