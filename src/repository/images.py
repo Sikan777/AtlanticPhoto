@@ -4,6 +4,8 @@ from datetime import datetime, timedelta
 from fastapi import UploadFile
 from src.entity.models import Image, User
 from src.schemas.images import ImageSchema, ImageUpdateSchema
+from fastapi import UploadFile, HTTPException, status
+from src.repository.tags import create_tag
 
 
 # this is used to get all images per User
@@ -69,7 +71,17 @@ async def create_image(file: str, body: ImageSchema, db: AsyncSession, user: Use
     :doc-author: Trelent
     """
     # image = Image(**body.model_dump(exclude_unset=True), user=user)
-    image = Image(description=body.description, image=file, user=user)
+    tags_l = []
+    if body.tags:
+        tags = [tag.strip() for tag in body.tags.split(',')]
+        if len(tags) > 5:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Too many tags")
+        for tag in tags:
+            tag = await create_tag(tag, db, user)
+            tags_l.append(tag)
+        image = Image(description=body.description, image=file, user=user, tags=tags_l)
+    else:
+        image = Image(description=body.description, image=file, user=user)
     db.add(image)
     await db.commit()
     await db.refresh(image)
