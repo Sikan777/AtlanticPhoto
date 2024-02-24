@@ -92,6 +92,8 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(150), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     avatar: Mapped[str] = mapped_column(String(255), nullable=True)
+    picture_count: Mapped[Optional[int]] = mapped_column(
+        Integer, nullable=True) #2402_picture_count
     refresh_token: Mapped[str] = mapped_column(String(255), nullable=True)
     created_at: Mapped[date] = mapped_column("created_at", DateTime, default=func.now())
     updated_at: Mapped[date] = mapped_column(
