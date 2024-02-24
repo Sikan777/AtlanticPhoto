@@ -21,9 +21,17 @@ async def get_current_user(
 
 
 @router.get("/{username}", response_model=AnotherUsers)
-async def get_user_profile(username: str, db: AsyncSession = Depends(get_db)):
-    user_info = await repositories_users.get_user_by_username(username, db)
-    # await repositories_users.get_picture_count(db, user_info) у нас нет такого метода, для доп задания было?
+async def get_user_profile(email: str, db: AsyncSession = Depends(get_db)):
+    """
+    Here you can see all your profile info entering your email.
+
+    :param email: str: Get the email of the user that is logged in
+    :param db: AsyncSession: Pass the database session to the repository
+    :return: A user object
+    :doc-author: Trelent
+    """
+    user_info = await repositories_users.get_user_by_email(email, db)
+    await repositories_users.get_picture_count(db, user_info)
 
     if not user_info:
         raise HTTPException(
@@ -33,31 +41,31 @@ async def get_user_profile(username: str, db: AsyncSession = Depends(get_db)):
     return user_info
 
 
-@router.patch("/me", response_model=UserResponse)
-async def update_own_profile(
-    user_update: UserUpdate,
-    user: User = Depends(auth_service.get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    updated_user = await repositories_users.update_user(
-        user.email, user_update, db
-    )  # Что здесь должно быть? Где метод апдейт юзер?
+# @router.patch("/me", response_model=UserResponse)
+# async def update_own_profile(
+#     user_update: UserUpdate,
+#     user: User = Depends(auth_service.get_current_user),
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     updated_user = await repositories_users.update_user(
+#         user.email, user_update, db
+#     )  # Что здесь должно быть? Где метод апдейт юзер?
 
-    return updated_user
+#     return updated_user
 
 
-# маршрут для заборони користувачам лише адмінам
-@router.patch("/admin/{username}/ban")
-async def ban_user(
-    username: str,
-    current_user: User = Depends(auth_service.get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    if not current_user.role == Role.admin:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to perform this action, Eshole!",
-        )
+# # маршрут для заборони користувачам лише адмінам
+# @router.patch("/admin/{username}/ban")
+# async def ban_user(
+#     username: str,
+#     current_user: User = Depends(auth_service.get_current_user),
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     if not current_user.role == Role.admin:
+#         raise HTTPException(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             detail="You don't have permission to perform this action, Eshole!",
+#         )
 
-    await repositories_users.ban_user(username, db)  # То же самое, нет метода бан юзер
-    return {"message": f"{username} has been banned."}
+#     await repositories_users.ban_user(username, db)  # То же самое, нет метода бан юзер
+#     return {"message": f"{username} has been banned."}

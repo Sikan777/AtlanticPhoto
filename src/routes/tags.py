@@ -35,7 +35,7 @@ async def read_tag(
         )
     return tag
 
-
+'''
 @router.post("/", response_model=TagResponse)
 async def create_tag(
     body: TagSchema,
@@ -63,9 +63,9 @@ async def create_tag(
         )
 
     return await repository_tags.create_tag(body, db, user, limit)
+'''
 
-
-@router.delete("/{tag_id}", response_model=TagResponse)
+@router.delete("/{tag_id}")
 async def remove_tag(
     tag_id: int,
     db: Session = Depends(get_db),

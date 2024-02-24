@@ -24,8 +24,8 @@ class UserResponse(BaseModel):
     email: EmailStr
     avatar: str | None
     role: Role  # 21.02.2024 Богдан
-    # picture_count: Optional[int]
     created_at: datetime
+    picture_count: Optional[int]
 
     class Config:
         from_attributes = True

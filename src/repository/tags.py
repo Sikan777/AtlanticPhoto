@@ -37,6 +37,7 @@ async def get_tag_by_name(db: AsyncSession, name):
     return tag.unique().scalar_one_or_none()
 
 
+# dont delete, we use it for images
 async def create_tag(body: str, db: AsyncSession, user: User) -> Tag:
     """
     The create_tag function creates a new tag in the database.
@@ -64,7 +65,7 @@ async def create_tag(body: str, db: AsyncSession, user: User) -> Tag:
     return tag
 
 
-async def remove_tag(tag_id: int, db: AsyncSession, user: User) -> Tag | None:
+async def remove_tag(tag_id: int, db: AsyncSession, user: User) -> None:
     """
     The remove_tag function removes a tag from the database.
 
