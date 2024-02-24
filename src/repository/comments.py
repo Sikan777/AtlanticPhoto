@@ -1,14 +1,15 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
-from src.entity.models import Comment
+from src.entity.models import Comment, User
 from src.schemas.comment import CommentCreate, CommentUpdate, CommentResponse
 from src.entity.models import Role, Image
 from typing import List, Optional
-from select import select
+from sqlalchemy import select
+from fastapi.exceptions import HTTPException
 
 
 async def create_comment(
-    db: AsyncSession, photo_id: int, comment: CommentCreate, user_id: int
+    body: CommentCreate, db: AsyncSession, existing_image: int, user: User
 ) -> CommentResponse:
     """
     The create_comment function creates a new comment in the database.
@@ -20,15 +21,15 @@ async def create_comment(
     :return: The created comment object
     :doc-author: YourName
     """
-    db_comment = Comment(image_id=photo_id, user_id=user_id, content=comment.content)
-    db.add(db_comment)
+    comment = Comment(**body.model_dump(exclude_unset=True), user=user, image_id=existing_image)
+    db.add(comment)
     await db.commit()
-    await db.refresh(db_comment)
-    return db_comment
+    await db.refresh(comment)
+    return comment
 
 
 async def update_comment(
-    db: AsyncSession, comment_id: int, user_id: int, content: str
+    db: AsyncSession, comment_id: int, user_id: int, content: CommentCreate
 ) -> CommentResponse:
     """
     The update_comment function updates an existing comment in the database.
@@ -40,19 +41,22 @@ async def update_comment(
     :return: The updated comment object if successful, None otherwise
     :doc-author: YourName
     """
-    comment = await db.get(Comment, comment_id)
-    if comment and comment.user_id == user_id:
-        if content.strip():
-            comment.content = content
-            comment.updated_at = datetime.utcnow()
-            await db.commit()
-            return comment
+    query =  select(Comment).filter_by(id=comment_id, user_id=user_id)
+    responce = await db.execute(query)
+    comment = responce.unique().scalar_one_or_none()
+    if comment:
+        comment.comment = content.comment
+        comment.updated_at = datetime.utcnow()
+        db.add(comment)
+        await db.commit()
+        await db.refresh(comment)
+        return comment
     return None
 
 
 async def delete_comment(
     db: AsyncSession, comment_id: int, user_role: Role
-) -> CommentResponse:
+) -> None :
     """
     The delete_comment function deletes a comment from the database.
 
@@ -62,35 +66,13 @@ async def delete_comment(
     :return: The deleted comment object if successful, None otherwise
     :doc-author: YourName
     """
-    comment = await db.get(Comment, comment_id)
+    query =  select(Comment).filter_by(id=comment_id)
+    responce = await db.execute(query)
+    comment = responce.unique().scalar_one_or_none()
     if comment:
         if user_role in [Role.admin, Role.moderator]:
-            db.delete(comment)
+            await db.delete(comment)
             await db.commit()
             return comment
-    return None
-
-
-async def get_all_comments(db: AsyncSession) -> List[CommentResponse]:
-    """
-    The get_all_comments function retrieves all comments from the database.
-
-    :param db: AsyncSession: Pass the database connection to the function
-    :return: A list of all comments
-    :doc-author: YourName
-    """
-    return await db.execute(select(Comment)).scalars().all()
-
-
-async def get_comment_by_id(
-    db: AsyncSession, comment_id: int
-) -> Optional[CommentResponse]:
-    """
-    The get_comment_by_id function retrieves a comment by its ID from the database.
-
-    :param db: AsyncSession: Pass the database connection to the function
-    :param comment_id: int: The ID of the comment to retrieve
-    :return: The retrieved comment object if found, None otherwise
-    :doc-author: YourName
-    """
-    return await db.get(Comment, comment_id)
+        raise HTTPException(status_code=403, detail="Forbidden: You don't have permission to delete comments")
+    raise HTTPException(status_code=404, detail="Comment not found")

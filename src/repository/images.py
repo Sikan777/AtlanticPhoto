@@ -54,7 +54,7 @@ async def get_image(image_id: int, db: AsyncSession, user: User):
     """
     stmt = select(Image).filter_by(id=image_id, user=user)
     image = await db.execute(stmt)
-    return image.scalar_one_or_none()
+    return image.unique().scalar_one_or_none()
 
 
 # this is used to create one new image

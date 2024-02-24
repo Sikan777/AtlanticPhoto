@@ -1,63 +1,69 @@
-from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from src.services.auth import auth_service
 from src.database.db import get_db
-from src.entity.models import User, Role
+from src.repository import comments as repo_comments
 from src.schemas.comment import CommentCreate, CommentUpdate, CommentResponse
-from src.repository import comments as repository_comments
+from src.services import auth_service
+from src.entity.models import User, Role
+from src.services.roles import RoleAccess
+from src.repository import images as repository_images
+from fastapi.concurrency import run_in_threadpool
+from sqlalchemy.ext.asyncio import AsyncSession
+
+access_to_delete = RoleAccess([Role.admin, Role.moderator])
+
+router = APIRouter(prefix="/comments", tags=["comments"])
 
 
-router = APIRouter(prefix='/comments', tags=['comments'])
-
-@router.post("/", response_model=CommentResponse)
+@router.post("/", response_model=CommentResponse, status_code=201)
 async def create_comment(
-    photo_id: int,
-    comment: CommentCreate,
-    db: Session = Depends(get_db),
-    user: User = Depends(auth_service.get_current_user)
+    body: CommentCreate,
+    image_id: int,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(auth_service.get_current_user),
 ):
-    return await repository_comments.create_comment(db=db, photo_id=photo_id, comment=comment, user_id=user.id)
+    """
+    Create a new comment.
+    """
+    existing_image = await repository_images.get_image(image_id, db, user) 
+    print(f'eto image{existing_image}')
+    if not existing_image: 
+        raise HTTPException( 
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail=f"Image with id {image_id} not found", 
+        )
+    created_comment = await repo_comments.create_comment(body, db, existing_image.id, user=user)
+    return created_comment
 
-@router.put("/{comment_id}", response_model=CommentResponse)
+
+@router.patch("/{comment_id}", response_model=CommentResponse)
 async def update_comment(
     comment_id: int,
-    comment: CommentUpdate,
-    db: Session = Depends(get_db),
-    user: User = Depends(auth_service.get_current_user)
+    body: CommentCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
-    updated_comment = await repository_comments.update_comment(db=db, comment_id=comment_id,
-                                                               user_id=user.id, content=comment.content)
+    """
+    Update an existing comment.
+    """
+    updated_comment = await repo_comments.update_comment(db, comment_id, current_user.id, body)
     if not updated_comment:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
+        raise HTTPException(status_code=400, detail="Cannot update comment with empty content")
+    elif not updated_comment.comment.strip():  # Перевірка, чи не є вміст коментаря пустим після редагування
+        # Якщо вміст коментаря порожній після редагування, вважаємо це спробою видалення коментаря
+        raise HTTPException(status_code=400, detail="Cannot update comment with empty content")
     return updated_comment
 
-@router.delete("/{comment_id}", response_model=CommentResponse)
+
+@router.delete("/{comment_id}")
 async def delete_comment(
     comment_id: int,
-    db: Session = Depends(get_db),
-    user: User = Depends(auth_service.get_current_user)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
-    if user.role in [Role.admin, Role.moderator]:
-        deleted_comment = await repository_comments.delete_comment(db=db, comment_id=comment_id)
-        if not deleted_comment:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
-        return deleted_comment
-    else:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Permission denied")
-
-@router.get("/", response_model=List[CommentResponse])
-async def get_all_comments(
-    db: Session = Depends(get_db)
-):
-    return await repository_comments.get_all_comments(db=db)
-
-@router.get("/{comment_id}", response_model=CommentResponse)
-async def get_comment_by_id(
-    comment_id: int,
-    db: Session = Depends(get_db)
-):
-    comment = await repository_comments.get_comment_by_id(db=db, comment_id=comment_id)
-    if not comment:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
-    return comment
+    """
+    Delete a comment.
+    """
+    
+    deleted_comment = await repo_comments.delete_comment(db, comment_id, current_user.role)
+    return deleted_comment

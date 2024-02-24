@@ -5,22 +5,18 @@ from pydantic import BaseModel, Field
 
 from src.schemas.users import UserResponse
 
-#add images
-class CommentBase(BaseModel):
-    content: str = Field(..., max_length=255)
+
+class CommentCreate(BaseModel):
+    comment: str = Field(min_length=3, max_length=255)
 
 
-class CommentCreate(CommentBase):
-    pass
-
-
-class CommentUpdate(CommentBase):
+class CommentUpdate(BaseModel):
     pass
 
 
 class CommentResponse(BaseModel):
     id: int
-    content: str
+    comment: str
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     user: Optional[UserResponse]
