@@ -49,7 +49,7 @@ class Tag(Base):
 
     # Ждем pictures
     images: Mapped[List["Image"]] = relationship(
-        secondary=picture_association, back_populates="tags", lazy="joined"
+        secondary=image_association, back_populates="tags", lazy="joined"
     )
 
 
@@ -66,7 +66,9 @@ class Image(Base):
     )
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     user: Mapped["User"] = relationship("User", backref="image", lazy="joined")
-    tags:Mapped[List["Tag"]] = relationship("Tag", secondary=image_association, back_populates="images")
+    tags: Mapped[List["Tag"]] = relationship(
+        "Tag", secondary=image_association, back_populates="images"
+    )
     comments: Mapped[List["Comment"]] = relationship(
         back_populates="image", cascade="all, delete", lazy="joined"
     )
