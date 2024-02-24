@@ -2,11 +2,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime
 from src.entity.models import Comment
 from src.schemas.comment import CommentCreate, CommentUpdate, CommentResponse
-from src.entity.models import Role
+from src.entity.models import Role, Image
 from typing import List, Optional
 from select import select
 
-async def create_comment(db: AsyncSession, photo_id: int, comment: CommentCreate, user_id: int) -> CommentResponse:
+
+async def create_comment(
+    db: AsyncSession, photo_id: int, comment: CommentCreate, user_id: int
+) -> CommentResponse:
     """
     The create_comment function creates a new comment in the database.
 
@@ -17,14 +20,16 @@ async def create_comment(db: AsyncSession, photo_id: int, comment: CommentCreate
     :return: The created comment object
     :doc-author: YourName
     """
-    db_comment = Comment(photo_id=photo_id, user_id=user_id, content=comment.content)
+    db_comment = Comment(image_id=photo_id, user_id=user_id, content=comment.content)
     db.add(db_comment)
     await db.commit()
     await db.refresh(db_comment)
     return db_comment
 
 
-async def update_comment(db: AsyncSession, comment_id: int, user_id: int, content: str) -> CommentResponse:
+async def update_comment(
+    db: AsyncSession, comment_id: int, user_id: int, content: str
+) -> CommentResponse:
     """
     The update_comment function updates an existing comment in the database.
 
@@ -45,7 +50,9 @@ async def update_comment(db: AsyncSession, comment_id: int, user_id: int, conten
     return None
 
 
-async def delete_comment(db: AsyncSession, comment_id: int, user_role: Role) -> CommentResponse:
+async def delete_comment(
+    db: AsyncSession, comment_id: int, user_role: Role
+) -> CommentResponse:
     """
     The delete_comment function deletes a comment from the database.
 
@@ -75,7 +82,9 @@ async def get_all_comments(db: AsyncSession) -> List[CommentResponse]:
     return await db.execute(select(Comment)).scalars().all()
 
 
-async def get_comment_by_id(db: AsyncSession, comment_id: int) -> Optional[CommentResponse]:
+async def get_comment_by_id(
+    db: AsyncSession, comment_id: int
+) -> Optional[CommentResponse]:
     """
     The get_comment_by_id function retrieves a comment by its ID from the database.
 

@@ -20,7 +20,7 @@ async def get_user_by_email(email: str, db: AsyncSession = Depends(get_db)):
     """
     statement = select(User).filter_by(email=email)
     user = await db.execute(statement)
-    user = user.scalar_one_or_none()
+    user = user.unique().scalar_one_or_none()
     return user
 
 
@@ -78,7 +78,7 @@ async def confirmed_email(email: str, db: AsyncSession) -> None:
     :return: None
     """
     user = await get_user_by_email(email, db)
-    user.confirmed = True
+    user.confirmed = True  # нет такой колонки в моделях юзеров
     await db.commit()
 
 
@@ -93,7 +93,7 @@ async def delete_access_token(email: str, db: AsyncSession) -> None:
     :doc-author: Trelent
     """
     user = await get_user_by_email(email, db)
-    user.access_token = None
+    user.access_token = None  # то же самое, где такой атрибут в юзерах? Оно ругается
     user.status = False
     await db.commit()
 
@@ -113,6 +113,7 @@ async def update_avatar_url(email: str, url: str | None, db: AsyncSession) -> Us
     await db.commit()
     await db.refresh(user)
     return user
+
 
 # Comfirm the email of the user
 # async def new_password(email: str, new_password:str, db: AsyncSession= Depends(get_db)):

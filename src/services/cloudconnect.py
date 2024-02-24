@@ -87,8 +87,8 @@ class CloudConnect:
         :return: A tuple of the url and public_id
         :doc-author: Trelent
         """
-        folder = await create_folder(user_id, "images", folder)
-        result = await uploading.upload(image.file, folder=folder)
+        folder = create_folder(user_id, "images", folder)
+        result = uploading.upload(image.file, folder=folder)
         return result["url"], result["public_id"]
 
     @staticmethod
@@ -109,9 +109,9 @@ class CloudConnect:
         :doc-author: Trelent
         """
 
-        folder = await create_folder(user_id, "transformed_images", folder)
-        result = await uploading.upload(
-            original_url, eager=[transformations], folder=folder
+        folder = create_folder(user_id, "transformed_images", folder)
+        result = uploading.upload(
+            original_url, transformations=transformations, folder=folder
         )
         return result["url"], result["public_id"]
 
@@ -128,7 +128,7 @@ class CloudConnect:
         :return: The response from the destroy method
         :doc-author: Trelent
         """
-        await uploading.destroy(public_id=pic_public_id)
+        uploading.destroy(public_id=pic_public_id)
 
     @staticmethod
     @input_error
@@ -144,5 +144,5 @@ class CloudConnect:
         :return: The url of the new image
         :doc-author: Trelent
         """
-        result = await uploading.explicit(public_id, eager=[transformations])
+        result = uploading.explicit(public_id, type="upload", eager=[transformations])
         return result["url"]
