@@ -21,8 +21,8 @@ async def get_current_user(
 
 
 @router.get("/{username}", response_model=AnotherUsers)
-async def get_user_profile(username: str, db: AsyncSession = Depends(get_db)):
-    user_info = await repositories_users.get_user_by_username(username, db)
+async def get_user_profile(email: str, db: AsyncSession = Depends(get_db)):
+    user_info = await repositories_users.get_user_by_email(email, db)
     await repositories_users.get_picture_count(db, user_info) 
 
     if not user_info:

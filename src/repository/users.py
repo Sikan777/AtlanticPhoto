@@ -114,21 +114,6 @@ async def update_avatar_url(email: str, url: str | None, db: AsyncSession) -> Us
     await db.refresh(user)
     return user
 
-async def get_user_by_username(username: str, db: AsyncSession = Depends(get_db)):
-    """
-    Retrieve a user from the database based on the full name.
-
-    :param full_name: Full name of the user to be retrieved.
-    :type full_name: str
-    :param db: Asynchronous SQLAlchemy session (dependency injection).
-    :type db: AsyncSession
-    :return: The retrieved user or None if not found.
-    :rtype: User or None
-    """
-    stmt = select(User).filter_by(username=username)
-    user = await db.execute(stmt)
-    user = user.unique().scalar_one_or_none()
-    return user
 
 async def get_picture_count(db: AsyncSession, user: User):
     """

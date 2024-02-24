@@ -79,7 +79,7 @@ async def get_all_comments(db: AsyncSession) -> List[CommentResponse]:
     :return: A list of all comments
     :doc-author: YourName
     """
-    return await db.execute(select(Comment)).scalars().all()
+    return await db.execute(select(Comment)).unique().scalars().all()
 
 
 async def get_comment_by_id(
