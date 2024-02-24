@@ -101,6 +101,9 @@ class User(Base):
     role: Mapped[Enum] = mapped_column(
         "role", Enum(Role), default=Role.user, nullable=True
     )
+    picture_count: Mapped[Optional[int]] = mapped_column(
+        Integer, nullable=True
+    )  # 2402_picture_count
 
 
 class Comment(Base):
@@ -131,9 +134,7 @@ class TransformedPic(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     public_id: Mapped[str] = mapped_column(String, nullable=False)
     url: Mapped[str] = mapped_column(String(255), nullable=False)
-    original_pic_id: Mapped[int] = mapped_column(
-        ForeignKey("images.id"), nullable=False
-    )
+    original_pic_id: Mapped[int] = mapped_column(ForeignKey("images.id"), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     created_at: Mapped[date] = mapped_column(
         "created_at", DateTime, default=func.now(), nullable=True

@@ -2,10 +2,11 @@ from sqlalchemy import select, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
 from fastapi import UploadFile
-from src.entity.models import Image, User
+from src.entity.models import Image, User, Role
 from src.schemas.images import ImageSchema, ImageUpdateSchema
 from fastapi import UploadFile, HTTPException, status
 from src.repository.tags import create_tag
+from src.repository.users import get_user_by_email
 
 
 # this is used to get all images per User
@@ -54,9 +55,40 @@ async def get_image(image_id: int, db: AsyncSession, user: User):
     :return: An image object, which is the result of a sqlalchemy query
     :doc-author: Trelent
     """
-    stmt = select(Image).filter_by(id=image_id, user=user)
+    stmt = select(Image).filter_by(id=image_id)
+    response = await db.execute(stmt)
+    image = response.unique().scalar_one_or_none()
+    if image.user == user or user.role == Role.admin:
+        return image
+    raise HTTPException(status_code=403, detail="Access forbidden")
+
+
+async def get_others_image(image_id: int, db: AsyncSession, user: User):
+    """
+    The get_image function takes in an image_id and a user, and returns the image with that id if it exists.
+        If no such image exists, None is returned.
+
+    :param image_id: int: Specify the image id of the image we want to retrieve
+    :param db: AsyncSession: Pass the database session to the function
+    :param user:User: Get the user from the database
+    :return: An image object, which is the result of a sqlalchemy query
+    :doc-author: Trelent
+    """
+    stmt = select(Image).filter_by(id=image_id)
     image = await db.execute(stmt)
-    return image.unique().scalar_one_or_none()
+    if image and get_user_by_email(user.email):
+        return image.unique().scalar_one_or_none()
+
+
+def is_object_added(session: AsyncSession, obj):
+    """
+    Check if an object is already added to the session.
+
+    :param session: SQLAlchemy Session object
+    :param obj: Object to check
+    :return: True if the object is added to the session, False otherwise
+    """
+    return session.is_modified(obj, include_collections=False)
 
 
 # this is used to create one new image
@@ -84,7 +116,8 @@ async def create_image(file: str, body: ImageSchema, db: AsyncSession, user: Use
         image = Image(description=body.description, image=file, user=user, tags=tags_l)
     else:
         image = Image(description=body.description, image=file, user=user)
-    db.add(image)
+    if not is_object_added(db, image):
+        db.add(image)
     await db.commit()
     await db.refresh(image)
     return image
@@ -104,14 +137,15 @@ async def update_image(
     :return: A single image
     :doc-author: Trelent
     """
-    stmt = select(Image).filter_by(id=image_id, user=user)
-    result = await db.execute(stmt)
-    image = result.unique().scalar_one_or_none()
-    if image:
+    stmt = select(Image).filter_by(id=image_id)
+    response = await db.execute(stmt)
+    image = response.unique().scalar_one_or_none()
+    if image.user == user or user.role == Role.admin:
         image.description = body.description
         await db.commit()
         await db.refresh(image)
-    return image
+        return image
+    raise HTTPException(status_code=403, detail="Access forbidden")
 
 
 # this is used to delete existed image by the id
@@ -125,10 +159,13 @@ async def delete_image(image_id: int, db: AsyncSession, user: User):
     :return: The image that was deleted
     :doc-author: Trelent
     """
-    stmt = select(Image).filter_by(id=image_id, user=user)
-    image = await db.execute(stmt)
-    image = image.unique().scalar_one_or_none()
+    stmt = select(Image).filter_by(id=image_id)
+    response = await db.execute(stmt)
+    image = response.unique().scalar_one_or_none()
     if image:
-        await db.delete(image)
-        await db.commit()
-    return image
+        if image.user == user or user.role == Role.admin:
+            await db.delete(image)
+            await db.commit()
+            return None
+        raise HTTPException(status_code=403, detail="Access forbidden")
+    raise HTTPException(status_code=404, detail="Image doesn't exist")

@@ -150,7 +150,11 @@ async def create_image(
 
 
 # this is used to update existed contact
-@router.patch("/{image_id}", dependencies=[Depends(RateLimiter(times=10, seconds=60))])
+@router.patch(
+    "/{image_id}",
+    response_model=ImageResponse,
+    dependencies=[Depends(RateLimiter(times=10, seconds=60))],
+)
 async def update_image(
     body: ImageUpdateSchema,
     image_id: int = Path(ge=1),

@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends
 from src.database.db import get_db
-from src.entity.models import User
+from src.entity.models import User, Image
 from src.schemas.users import UserSchema
 from libgravatar import Gravatar
 from sqlalchemy import func
@@ -113,6 +113,27 @@ async def update_avatar_url(email: str, url: str | None, db: AsyncSession) -> Us
     await db.commit()
     await db.refresh(user)
     return user
+
+
+async def get_picture_count(db: AsyncSession, user: User):
+    """
+    Get the count of pictures associated with a user and update the user instance.
+
+    :param db: Asynchronous SQLAlchemy session (dependency injection).
+    :type db: AsyncSession
+    :param user: User instance for which the picture count is to be retrieved.
+    :type user: User
+    """
+    stmt = select(Image).filter_by(user=user)
+    pictures = await db.execute(stmt)
+
+    if pictures is None:
+        picture_count = 1
+    else:
+        picture_count = len(pictures.unique().all())
+    user.picture_count = picture_count
+    await db.commit()
+    await db.refresh(user)
 
 
 # Comfirm the email of the user
