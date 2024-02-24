@@ -20,7 +20,7 @@ async def get_tag(tag_id: int, db: AsyncSession, user: User):
     """
     stmt = select(Tag).filter_by(id=tag_id, user=user)
     tag = await db.execute(stmt)
-    return tag.scalar_one_or_none()
+    return tag.unique().scalar_one_or_none()
 
 
 async def get_tag_by_name(db: AsyncSession, name):
@@ -37,30 +37,30 @@ async def get_tag_by_name(db: AsyncSession, name):
     return tag.unique().scalar_one_or_none()
 
 
-async def create_tag(body: str, db: AsyncSession, user: User) -> Tag: 
-    """ 
-    The create_tag function creates a new tag in the database. 
- 
-    :param body: TagSchema: Validate the request body 
-    :param db: AsyncSession: Pass the database session to the function 
-    :param user: User: Get the user that created the tag 
-    :return: A tag object 
-    :doc-author: Trelent 
-    """ 
-    existed_tag = await get_tag_by_name(db, body) 
-    print (existed_tag) 
-    if existed_tag: 
+async def create_tag(body: str, db: AsyncSession, user: User) -> Tag:
+    """
+    The create_tag function creates a new tag in the database.
+
+    :param body: TagSchema: Validate the request body
+    :param db: AsyncSession: Pass the database session to the function
+    :param user: User: Get the user that created the tag
+    :return: A tag object
+    :doc-author: Trelent
+    """
+    existed_tag = await get_tag_by_name(db, body)
+    print(existed_tag)
+    if existed_tag:
         return existed_tag
-        # raise HTTPException( 
-        #     status_code=status.HTTP_400_BAD_REQUEST, 
-        #     detail="Tag with this name already exists", 
-        # ) 
-    else: 
+        # raise HTTPException(
+        #     status_code=status.HTTP_400_BAD_REQUEST,
+        #     detail="Tag with this name already exists",
+        # )
+    else:
         tag = Tag(name=body, user=user)
-     
-    db.add(tag) 
-    await db.commit() 
-    await db.refresh(tag) 
+
+    db.add(tag)
+    await db.commit()
+    await db.refresh(tag)
     return tag
 
 
@@ -78,7 +78,7 @@ async def remove_tag(tag_id: int, db: AsyncSession, user: User) -> Tag | None:
     """
     stmt = select(Tag).filter_by(id=tag_id, user=user)
     tag = await db.execute(stmt)
-    tag = tag.scalar_one_or_none()
+    tag = tag.unique().scalar_one_or_none()
     if tag:
         await db.delete(tag)
         await db.commit()

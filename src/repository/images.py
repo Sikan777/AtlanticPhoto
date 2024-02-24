@@ -22,7 +22,7 @@ async def get_images(limit: int, offset: int, db: AsyncSession, user: User):
     """
     stmt = select(Image).filter_by(user=user).offset(offset).limit(limit)
     images = await db.execute(stmt)
-    return images.scalars().all()
+    return images.scalars().unique().all()
 
 
 # this is used to get all contacts
@@ -39,7 +39,7 @@ async def get_all_images(limit: int, offset: int, db: AsyncSession):
     """
     stmt = select(Image).offset(offset).limit(limit)
     contacts = await db.execute(stmt)
-    return contacts.scalars().all()
+    return contacts.scalars().unique().all()
 
 
 # this is used to get only 1 image by the id
@@ -56,7 +56,7 @@ async def get_image(image_id: int, db: AsyncSession, user: User):
     """
     stmt = select(Image).filter_by(id=image_id, user=user)
     image = await db.execute(stmt)
-    return image.scalar_one_or_none()
+    return image.unique().scalar_one_or_none()
 
 
 # this is used to create one new image
@@ -73,9 +73,11 @@ async def create_image(file: str, body: ImageSchema, db: AsyncSession, user: Use
     # image = Image(**body.model_dump(exclude_unset=True), user=user)
     tags_l = []
     if body.tags:
-        tags = [tag.strip() for tag in body.tags.split(',')]
+        tags = [tag.strip() for tag in body.tags.split(",")]
         if len(tags) > 5:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Too many tags")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Too many tags"
+            )
         for tag in tags:
             tag = await create_tag(tag, db, user)
             tags_l.append(tag)
@@ -104,7 +106,7 @@ async def update_image(
     """
     stmt = select(Image).filter_by(id=image_id, user=user)
     result = await db.execute(stmt)
-    image = result.scalar_one_or_none()
+    image = result.unique().scalar_one_or_none()
     if image:
         image.description = body.description
         await db.commit()
@@ -125,7 +127,7 @@ async def delete_image(image_id: int, db: AsyncSession, user: User):
     """
     stmt = select(Image).filter_by(id=image_id, user=user)
     image = await db.execute(stmt)
-    image = image.scalar_one_or_none()
+    image = image.unique().scalar_one_or_none()
     if image:
         await db.delete(image)
         await db.commit()
