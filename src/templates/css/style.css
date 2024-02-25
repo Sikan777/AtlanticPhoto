@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600&display=swap');
 
 :root{
+	--dark-grey:#696969;
+	--dark-green:#004d00;
     --orange:#ff7800;
     --black:#130f40;
     --light-color:#666;
@@ -11,7 +13,7 @@
 }
 
 *{
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Comic Sans MS', sans-serif;
     margin:0; padding:0;
     box-sizing: border-box;
     outline: none; border:none;
@@ -44,7 +46,7 @@ section{
 }
 
 .heading span{
-    background: var(--orange);
+    background: var(--dark-grey);
     color:#fff;
     display: inline-block;
     padding:.5rem 3rem;
@@ -83,17 +85,23 @@ section{
 .header .logo{
     font-size: 2.5rem;
     font-weight: bolder;
-    color:var(--black);
+    color:var(--dark-grey);
 }
 
 .header .logo i{
     color:var(--orange);
+	width: 33px;
+    height: 33px;
+    /* Устанавливаем фоновое изображение */
+    background: url('../image/turtles_icon.jpg') no-repeat;
+    /* Добавляем стили, чтобы изображение заполняло контейнер */
+    background-size: contain;
 }
 
 .header .navbar a{
     font-size: 1.7rem;
     margin:0 1rem;
-    color:var(--black);
+    color:var(--dark-grey);
 }
 
 .header .navbar a:hover{
@@ -106,7 +114,7 @@ section{
     line-height: 4.5rem;
     border-radius: .5rem;
     background: #eee;
-    color:var(--black);
+    color:var(--dark-green);
     font-size: 2rem;
     margin-left: .3rem;
     cursor: pointer;
@@ -229,6 +237,21 @@ section{
     margin:1rem;
 }
 
+/* #login-btn { */
+	/* display: inline-block; */
+/* } */
+/* #signup-btn { */
+	/* display: inline-block; */
+/* } */
+/* #logout-btn { */
+	/* display: inline-block; */
+/* } */
+#login-form {
+	display: inline-block;
+}
+
+
+/* login */
 .header .login-form{
     position: absolute;
     top:110%; right:-110%;
@@ -273,15 +296,107 @@ section{
     text-decoration: underline;
 }
 
+
+
+/* signup */
+.header .signup-form{
+    position: absolute;
+    top:110%; right:-110%;
+    width:35rem;
+    box-shadow: var(--box-shadow);
+    padding:2rem;
+    border-radius: .5rem;
+    background: #fff;
+    text-align: center;
+}
+
+.header .signup-form.active{
+    right:2rem;
+    transition: .4s linear;
+}
+
+.header .signup-form h3{
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    color: var(--black);
+}
+
+.header .signup-form .box{
+    width: 100%;
+    margin:.7rem 0;
+    background:#eee;
+    border-radius: .5rem;
+    padding:1rem;
+    font-size: 1.6rem;
+    color:var(--black);
+    text-transform: none;
+}
+
+.header .signup-form p{
+    font-size: 1.4rem;
+    padding:.5rem 0;
+    color:var(--light-color);
+}
+
+.header .signup-form p a{
+    color:var(--orange);
+    text-decoration: underline;
+}
+
+/* logout */
+.header .logout-form{
+    position: absolute;
+    top:110%; right:-110%;
+    width:35rem;
+    box-shadow: var(--box-shadow);
+    padding:2rem;
+    border-radius: .5rem;
+    background: #fff;
+    text-align: center;
+}
+
+.header .logout-form.active{
+    right:2rem;
+    transition: .4s linear;
+}
+
+.header .logout-form h3{
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    color: var(--black);
+}
+
+.header .logout-form .box{
+    width: 100%;
+    margin:.7rem 0;
+    background:#eee;
+    border-radius: .5rem;
+    padding:1rem;
+    font-size: 1.6rem;
+    color:var(--black);
+    text-transform: none;
+}
+
+.header .logout-form p{
+    font-size: 1.4rem;
+    padding:.5rem 0;
+    color:var(--light-color);
+}
+
+.header .logout-form p a{
+    color:var(--orange);
+    text-decoration: underline;
+}
+
 .home{
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url(../image/banner-bg.webp) no-repeat;
+    background: url(../image/AtlOc1.png) no-repeat;
     background-position: center;
     background-size: cover;
     padding-top: 17rem;
-    padding-bottom: 10rem;
+    padding-bottom: 27rem;
 }
 
 .home .content{
@@ -295,7 +410,7 @@ section{
 }
 
 .home .content h3 span{
-    color:var(--orange);
+    color:var(--dark-green);
 }
 
 .home .content p{
@@ -543,12 +658,18 @@ section{
 
 .footer .box-container .box h3{
     font-size: 2.5rem;
-    color:var(--black);
+    color:var(--dark-grey);
     padding:1rem 0;
 }
 
 .footer .box-container .box h3 i{
     color:var(--orange);
+	width: 33px;
+    height: 33px;
+    /* Устанавливаем фоновое изображение */
+    background: url('../image/turtles_icon.jpg') no-repeat;
+    /* Добавляем стили, чтобы изображение заполняло контейнер */
+    background-size: contain;
 }
 
 .footer .box-container .box .links{
