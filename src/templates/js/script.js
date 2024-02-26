@@ -1,5 +1,5 @@
 let searchForm = document.querySelector('.search-form');
-let shoppingCart = document.querySelector('.shopping-cart');
+//let shoppingCart = document.querySelector('.shopping-cart');
 let navbar = document.querySelector('.navbar');
 let loginForm = document.querySelector('.login-form');
 let logoutForm = document.querySelector('.logout-form');
@@ -8,7 +8,7 @@ let signupForm = document.querySelector('.signup-form');
 
 document.querySelector('#search-btn').onclick = () =>{
 	searchForm.classList.toggle('active');
-	shoppingCart.classList.remove('active');
+	//shoppingCart.classList.remove('active');
 	loginForm.classList.remove('active');
 	signupForm.classList.remove('active');
 	navbar.classList.remove('active');
@@ -16,20 +16,20 @@ document.querySelector('#search-btn').onclick = () =>{
 
 
 
-document.querySelector('#cart-btn').onclick = () =>{
-	shoppingCart.classList.toggle('active');
-	searchForm.classList.remove('active');
-	loginForm.classList.remove('active');
-	signupForm.classList.remove('active');
-	navbar.classList.remove('active');
-}
+// document.querySelector('#cart-btn').onclick = () =>{
+	// shoppingCart.classList.toggle('active');
+	// searchForm.classList.remove('active');
+	// loginForm.classList.remove('active');
+	// signupForm.classList.remove('active');
+	// navbar.classList.remove('active');
+// }
 
 
 
 document.querySelector('#login-btn').onclick = () =>{
 	loginForm.classList.toggle('active');
 	searchForm.classList.remove('active');
-	shoppingCart.classList.remove('active');
+	//shoppingCart.classList.remove('active');
 	signupForm.classList.remove('active');
 	navbar.classList.remove('active');
 }
@@ -39,7 +39,7 @@ document.querySelector('#login-btn').onclick = () =>{
 document.querySelector('#signup-btn').onclick = () =>{
 	signupForm.classList.toggle('active');
 	searchForm.classList.remove('active');
-	shoppingCart.classList.remove('active');
+	//shoppingCart.classList.remove('active');
 	loginForm.classList.remove('active');
 	navbar.classList.remove('active');
 }
@@ -48,7 +48,7 @@ document.querySelector('#logout-btn').onclick = () =>{
 	logoutForm.classList.toggle('active');
 	signupForm.classList.remove('active');
 	searchForm.classList.remove('active');
-	shoppingCart.classList.remove('active');
+	//shoppingCart.classList.remove('active');
 	loginForm.classList.remove('active');
 	navbar.classList.remove('active');
 }
@@ -58,14 +58,14 @@ document.querySelector('#logout-btn').onclick = () =>{
 document.querySelector('#menu-btn').onclick = () =>{
 	navbar.classList.toggle('active');
 	searchForm.classList.remove('active');
-	shoppingCart.classList.remove('active');
+	//shoppingCart.classList.remove('active');
 	loginForm.classList.remove('active');
 	signupForm.classList.remove('active');
 }
 
 window.onscroll = () =>{
 	searchForm.classList.remove('active');
-	shoppingCart.classList.remove('active');
+	//shoppingCart.classList.remove('active');
 	loginForm.classList.remove('active');
 	signupForm.classList.remove('active');
 	navbar.classList.remove('active');
@@ -244,4 +244,41 @@ document.addEventListener("DOMContentLoaded", function(){
 	}
 	
 })
+
+document.addEventListener("DOMContentLoaded", () => {
+    const addPhotoBtn = document.getElementById("addPhotoBtn");
+    const fileInput = document.getElementById("fileInput");
+    const uploadedImagesSection = document.getElementById("uploadedImages");
+
+    addPhotoBtn.addEventListener("click", () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener("change", async (event) => {
+        const file = event.target.files[0];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch("http://localhost:8000/api/images", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to upload image");
+            }
+
+            const imageData = await response.json();
+            const imageUrl = imageData.url;
+
+            // Create image element and append it to the uploaded images section
+            const imageElement = document.createElement("img");
+            imageElement.src = imageUrl;
+            uploadedImagesSection.appendChild(imageElement);
+        } catch (error) {
+            console.error("Error uploading image:", error);
+        }
+    });
+});
 

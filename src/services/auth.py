@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, FastAPI
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,6 +11,7 @@ from src.conf.config import config
 import redis
 import pickle
 
+app=FastAPI() #26.02 token valid
 
 class Auth:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -48,6 +49,10 @@ class Auth:
         return self.pwd_context.hash(password)
 
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+    
+    @app.get("/items/")
+    async def read_items(token: str = Depends(oauth2_scheme)):
+        return {"token": token}##26.02 token valid
 
     # define a function to generate a new access token
     async def create_access_token(
@@ -132,6 +137,21 @@ class Auth:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Could not validate credentials",
             )
+            
+    #26.02 token valid
+    def is_valid_token(self, token):
+        try:
+            # Декодирование токена
+            payload = jwt.decode(token, self.SECRET_KEY, algorithms=['HS256'])
+            # Проверка срока действия токена
+            expiration_time = datetime.fromtimestamp(payload['exp'])
+            if expiration_time < datetime.utcnow():
+                return False
+            return True
+        except jwt.ExpiredSignatureError:
+            return False
+        except jwt.InvalidTokenError:
+            return False
 
     # gets user by his/her access token
     async def get_current_user(
