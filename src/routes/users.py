@@ -20,7 +20,7 @@ async def get_current_user(
     return user
 
 
-@router.get("/{username}", response_model=AnotherUsers)
+@router.get("/{username}", response_model=UserResponse)
 async def get_user_profile(email: str, db: AsyncSession = Depends(get_db)):
     """
     Here you can see all your profile info entering your email.

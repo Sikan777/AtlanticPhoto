@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from passlib.context import CryptContext
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 from jose import JWTError, jwt
 from src.database.db import get_db
@@ -49,6 +49,7 @@ class Auth:
         return self.pwd_context.hash(password)
 
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+    oauth2b_scheme = HTTPBearer()
     
     
 
@@ -150,7 +151,7 @@ class Auth:
             return False
         except jwt.InvalidTokenError:
             return False
-
+#_____________________________________________________________________________26.02 token valid__|
     # gets user by his/her access token
     async def get_current_user(
         self, token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)

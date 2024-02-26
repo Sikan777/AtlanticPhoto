@@ -62,9 +62,9 @@ async def healthchecker(db: AsyncSession = Depends(get_db)):
         print(e)
         raise HTTPException(status_code=500, detail="Error connecting to the database")
     
-    
-@app.get("api/token/")
+##26.02 token valid    
+@app.get("/api/token/")
 async def read_items(token: str = Depends(oauth2_scheme)):
-        return {"token": token}##26.02 token valid
+        return {"token": token}
 
 

@@ -149,7 +149,7 @@ async def create_image(
     # Проверяем валидность токена доступа
     if not auth_service.is_valid_token(token):
         raise HTTPException(status_code=401, detail="Invalid access token")
-    #_____________________________________________________________________________26.02 token valid
+    #_____________________________________________________________________________26.02 token valid__|
     print(body)
     public_id = f"Image/{current_user.email}"
     res = cloudinary.uploader.upload(file.file, public_id=public_id, owerite=True)

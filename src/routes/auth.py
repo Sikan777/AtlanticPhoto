@@ -3,6 +3,7 @@ from fastapi.security import (
     OAuth2PasswordRequestForm,
     HTTPAuthorizationCredentials,
     HTTPBearer,
+    OAuth2PasswordBearer
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.db import get_db
