@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
-from fastapi import Depends, HTTPException, status, FastAPI
+from fastapi import Depends, HTTPException, status
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +11,7 @@ from src.conf.config import config
 import redis
 import pickle
 
-app=FastAPI() #26.02 token valid
+
 
 class Auth:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -50,9 +50,7 @@ class Auth:
 
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
     
-    @app.get("/items/")
-    async def read_items(token: str = Depends(oauth2_scheme)):
-        return {"token": token}##26.02 token valid
+    
 
     # define a function to generate a new access token
     async def create_access_token(
