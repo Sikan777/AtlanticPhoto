@@ -11,16 +11,16 @@ from src.services.auth import auth_service
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/me", response_model=UserResponse)
-async def get_current_user(
-    user: User = Depends(auth_service.get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
-    # await repositories_users.get_picture_count(db, user) у нас нет такого метода, для доп задания было?
-    return user
+# @router.get("/me", response_model=UserResponse)
+# async def get_current_user(
+#     user: User = Depends(auth_service.get_current_user),
+#     db: AsyncSession = Depends(get_db),
+# ):
+#     # await repositories_users.get_picture_count(db, user) у нас нет такого метода, для доп задания было?
+#     return user
 
 
-@router.get("/{username}", response_model=AnotherUsers)
+@router.get("/{username}", response_model=UserResponse)
 async def get_user_profile(email: str, db: AsyncSession = Depends(get_db)):
     """
     Here you can see all your profile info entering your email.

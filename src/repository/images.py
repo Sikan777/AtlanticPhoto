@@ -116,8 +116,8 @@ async def create_image(file: str, body: ImageSchema, db: AsyncSession, user: Use
         image = Image(description=body.description, image=file, user=user, tags=tags_l)
     else:
         image = Image(description=body.description, image=file, user=user)
-    if not is_object_added(db, image):
-        db.add(image)
+    #if not is_object_added(db, image):
+    db.add(image)
     await db.commit()
     await db.refresh(image)
     return image
