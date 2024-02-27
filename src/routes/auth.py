@@ -7,15 +7,27 @@ from fastapi.security import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.db import get_db
+from src.entity.models import User
 from src.repository import users as repo_users
 from src.schemas.users import UserSchema, TokenSchema, UserResponse
 from src.services.auth import auth_service
 from starlette.responses import JSONResponse
 from src.conf import messages
+from jose import JWTError, jwt
+import pickle
+from src.conf.config import config
+import redis
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 get_refresh_token = HTTPBearer()
-
+SECRET_KEY = config.SECRET_KEY_JWT
+ALGORITHM = config.ALGORITHM
+cache = redis.Redis(
+        host=config.REDIS_DOMAIN,
+        port=config.REDIS_PORT,
+        db=0,
+        password=config.REDIS_PASSWORD,
+    )
 
 # Use for signup
 @router.post(
@@ -83,6 +95,54 @@ async def login(
         "refresh_token": refresh_token,
         "token_type": "bearer",
     }
+    
+#27.02 OAuth2PasswordBearer  auth  
+#@router.post("/t_login", response_model=TokenSchema)
+async def t_login(
+        token: OAuth2PasswordBearer = Depends(), db: AsyncSession = Depends(get_db)
+    ):
+        """
+        The get_current_user function is a dependency that will be used in the
+            get_current_active_user endpoint. It takes in a token and db session,
+            decodes the JWT, checks if it's an access token or refresh token, then
+            returns the user object from cache or database.
+
+        :param self: Access the class attributes
+        :param token: str: Get the token from the header
+        :param db: AsyncSession: Get the database session
+        :return: The user object which is then used to check if the user has access to a certain route
+        """
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        try:
+            # Decode JWT
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            if payload["scope"] == "access_token":
+                email = payload["sub"]
+                if email is None:
+                    raise credentials_exception
+            else:
+                raise credentials_exception
+        except JWTError as e:
+            raise credentials_exception
+
+        user_hash = str(email)
+        user = cache.get(user_hash)
+
+        if user is None:
+            user = await repo_users.get_user_by_email(email, db)
+            if user is None:
+                raise credentials_exception
+            cache.set(user_hash, pickle.dumps(user))
+            cache.expire(user_hash, 300)
+            # print("User is not from cache")
+        else:
+            # print("User from cache")
+            user = pickle.loads(user)
+        return user
 
 
 # Use for get a refresh token

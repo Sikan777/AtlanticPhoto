@@ -144,7 +144,7 @@ async def create_image(
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     token = authorization.split("Bearer ")[1]
-    print(token)
+    print(f"TOKEN{token}")
 
     # Проверяем валидность токена доступа
     if not auth_service.is_valid_token(token):

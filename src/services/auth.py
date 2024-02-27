@@ -154,7 +154,7 @@ class Auth:
 #_____________________________________________________________________________26.02 token valid__|
     # gets user by his/her access token
     async def get_current_user(
-        self, token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
+        self, token: str = Depends(oauth2b_scheme), db: AsyncSession = Depends(get_db)
     ):
         """
         The get_current_user function is a dependency that will be used in the

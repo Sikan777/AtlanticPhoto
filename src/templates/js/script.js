@@ -246,6 +246,7 @@ document.addEventListener("DOMContentLoaded", function(){
 })
 
 document.addEventListener("DOMContentLoaded", () => {
+	const accessToken = localStorage.getItem('access_token');
     const addPhotoBtn = document.getElementById("addPhotoBtn");
     const fileInput = document.getElementById("fileInput");
     const uploadedImagesSection = document.getElementById("uploadedImages");
@@ -260,9 +261,11 @@ document.addEventListener("DOMContentLoaded", () => {
         formData.append("file", file);
 
         try {
-            const response = await fetch("http://localhost:8000/api/images", {
+            const response = await fetch("http://localhost:8000/api/images/", {
                 method: "POST",
-                body: formData,
+                headers: {
+						'Authorization': `Bearer ${accessToken}`
+					}
             });
 
             if (!response.ok) {
