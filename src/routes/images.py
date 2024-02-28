@@ -128,7 +128,7 @@ async def create_image(
     file: UploadFile = File(),
     body: ImageSchema = Depends(ImageSchema),
     db: AsyncSession = Depends(get_db),
-    #authorization: str = Header(None), #26.02 token valid
+    #authorization: str = Header(...), #26.02 token valid ожидать обязательный заголовок или Header(default="default_value") необязательный
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
@@ -145,17 +145,20 @@ async def create_image(
     :return: An imageresponse object
     :doc-author: Trelent
     """
-    # Проверяем наличие заголовка Authorization
+    
+    # # Проверяем наличие заголовка Authorization
     # if authorization is None or not authorization.startswith("Bearer "): #26.02 token valid
     #     raise HTTPException(status_code=401, detail="Unauthorized")
-
+    
     # token = authorization.split("Bearer ")[1]
     # print(f"TOKEN{token}")
+
+    
 
     # # Проверяем валидность токена доступа
     # if not auth_service.is_valid_token(token):
     #     raise HTTPException(status_code=401, detail="Invalid access token")
-    #_____________________________________________________________________________26.02 token valid__|
+    # #_____________________________________________________________________________26.02 token valid__|
     print(body)
     public_id = f"Image/{current_user.email}"
     res = cloudinary.uploader.upload(file.file, public_id=public_id, owerite=True)

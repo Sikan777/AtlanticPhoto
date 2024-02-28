@@ -113,7 +113,7 @@ var swiper = new Swiper(".review-slider", {
 	},
 });
 
-
+let access_token;
 document.addEventListener("DOMContentLoaded", function(){
 	// /signup user
 	
@@ -164,7 +164,6 @@ document.addEventListener("DOMContentLoaded", function(){
 	// /login user
 	document.querySelector('.login-form').addEventListener('submit', async function(event) {
 		event.preventDefault();
-		const accessToken = localStorage.getItem('access_token');
 		const formData = new FormData(this);
 		const formDataJSON = Object.fromEntries(formData.entries());
 		// const formData = new URLSearchParams();
@@ -175,15 +174,20 @@ document.addEventListener("DOMContentLoaded", function(){
 		try {
 			const response = await fetch('http://localhost:8000/api/auth/login', {
 				method: 'POST',
-				//headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 				body: formData
 			    //body: JSON.stringify(formDataJSON)
+				//headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+				// mode: 'cors',
+				// headers: {
+				// 'Content-Type': 'application/json'
+				// },
 			});
 
 			if (response.ok) {
 				const data = await response.json();
 				console.log(data); // Вывод ответа сервера
-				console.log(formData)
+				access_token = data.access_token;
+				console.log("Access Token:", access_token);
 				// Скрыть форму login
 				document.getElementById('login-form').style.display = 'none';
 				// Скрыть кнопки login и signup
@@ -225,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function(){
 				const response = await fetch('http://localhost:8000/api/auth/logout', {
 					method: 'POST',
 					headers: {
-						'Authorization': `Bearer ${accessToken}`
+						'Authorization': `Bearer ${access_token}`
 					}
 				});
 				if (response.ok) {
@@ -249,11 +253,11 @@ document.addEventListener("DOMContentLoaded", function(){
 			}
 		});
 	}
+	//create image
 	
 })
 
 document.addEventListener("DOMContentLoaded", () => {
-	const accessToken = localStorage.getItem('access_token');
     const addPhotoBtn = document.getElementById("addPhotoBtn");
     const fileInput = document.getElementById("fileInput");
     const uploadedImagesSection = document.getElementById("uploadedImages");
@@ -263,32 +267,60 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     fileInput.addEventListener("change", async (event) => {
-        const file = event.target.files[0];
-        const formData = new FormData();
-        formData.append("file", file);
-		const formDataJSON = Object.fromEntries(formData.entries());
+		
+		document.getElementById("uploadButton").addEventListener("click", async () => {
+			event.preventDefault();
+			//const fileInput = document.getElementById("fileInput");
+			const file = event.target.files[0];
+			const descriptionInput = document.getElementById("description");
+			const description = descriptionInput.value.trim();
+			
+			if (description === "") {
+            alert("Please enter image description.");
+            return;
+			}
+			
+			console.log(description)
+			
+			const formData = new FormData();
+			formData.append("file", file);
+			formData.append("description", description);
+			
+			console.log(formData)
+			console.log(formData.get("description"));
+			console.log(formData.get("file"));
+			
+			descriptionInput.value = "";
+			
+			const formDataJSON = Object.fromEntries(formData.entries());
+			
 
-        try {
-            const response = await fetch("http://localhost:8000/api/images/", {
-                method: 'POST',
-				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-			    body: JSON.stringify(formDataJSON)
-            });
+			try {
+				const response = await fetch("http://localhost:8000/api/images/", {
+					method: 'POST',
+					headers: {
+					'Authorization': `Bearer ${access_token}` // Включаем access token в заголовок Authorization
+					},
+					//body: formData
+					body: JSON.stringify(formDataJSON)
+				});
 
-            if (!response.ok) {
-                throw new Error("Failed to upload image");
-            }
+				if (!response.ok) {
+					throw new Error("Failed to upload image");
+				}
 
-            const imageData = await response.json();
-            const imageUrl = imageData.url;
+				const imageData = await response.json();
+				const imageUrl = imageData.url;
 
-            // Create image element and append it to the uploaded images section
-            const imageElement = document.createElement("img");
-            imageElement.src = imageUrl;
-            uploadedImagesSection.appendChild(imageElement);
-        } catch (error) {
-            console.error("Error uploading image:", error);
-        }
-    });
+				// Create image element and append it to the uploaded images section
+				const imageElement = document.createElement("img");
+				imageElement.src = imageUrl;
+				uploadedImagesSection.appendChild(imageElement);
+				//document.getElementById("form").appendChild(description);
+			} catch (error) {
+				console.error("Error uploading image:", error);
+			}
+		});
+	});
 });
 
