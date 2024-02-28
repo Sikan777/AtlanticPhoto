@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     MAIL_FROM: str = "postgres"
     MAIL_PORT: int = 567234
     MAIL_SERVER: str = "postgres"
-    REDIS_DOMAIN: str = 'localhost'
+    REDIS_DOMAIN: str = 'redis'
     REDIS_PORT: int = 6379
     REDIS_PASSWORD: str | None = None
     #_cloudinary___
