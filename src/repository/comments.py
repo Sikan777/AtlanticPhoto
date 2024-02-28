@@ -25,7 +25,7 @@ async def create_comment(
     comment = Comment(
         **body.model_dump(exclude_unset=True), user=user, image_id=existing_image
     )
-    #if not is_object_added(db, comment):
+    # if not is_object_added(db, comment):
     db.add(comment)
     await db.commit()
     await db.refresh(comment)
@@ -48,7 +48,7 @@ async def update_comment(
     query = select(Comment).filter_by(id=comment_id, user_id=user_id)
     responce = await db.execute(query)
     comment = responce.unique().scalar_one_or_none()
-    if not comment.comment.strip():
+    if content.comment.strip():
         comment.comment = content.comment
         comment.updated_at = datetime.utcnow()
         db.add(comment)
