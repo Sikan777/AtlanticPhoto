@@ -14,13 +14,13 @@ async def create_comment(
 ) -> CommentResponse:
     """
     The create_comment function creates a new comment in the database.
-
+    
+    :param body: CommentCreate: Pass the comment data to the function
     :param db: AsyncSession: Pass the database connection to the function
-    :param photo_id: int: The ID of the photo for which the comment is being created
-    :param comment: CommentCreate: The comment data
-    :param user_id: int: The ID of the user creating the comment
+    :param existing_image: int: Pass the image id to the function
+    :param user: User: Get the user_id of the user who is creating the comment
     :return: The created comment object
-    :doc-author: YourName
+    :doc-author: Trelent
     """
     comment = Comment(
         **body.model_dump(exclude_unset=True), user=user, image_id=existing_image
@@ -37,13 +37,13 @@ async def update_comment(
 ) -> CommentResponse:
     """
     The update_comment function updates an existing comment in the database.
-
+    
     :param db: AsyncSession: Pass the database connection to the function
-    :param comment_id: int: The ID of the comment to be updated
-    :param user_id: int: The ID of the user who created the comment
-    :param content: str: The new content of the comment
-    :return: The updated comment object if successful, None otherwise
-    :doc-author: YourName
+    :param comment_id: int: Identify the comment to be updated
+    :param user_id: int: Identify the user who created the comment
+    :param content: CommentCreate: Pass the new content of the comment to be updated
+    :return: A commentresponse object if successful, none otherwise
+    :doc-author: Trelent
     """
     query = select(Comment).filter_by(id=comment_id, user_id=user_id)
     responce = await db.execute(query)
@@ -61,12 +61,17 @@ async def update_comment(
 async def delete_comment(db: AsyncSession, comment_id: int, user_role: Role) -> None:
     """
     The delete_comment function deletes a comment from the database.
-
-    :param db: AsyncSession: Pass the database connection to the function
-    :param comment_id: int: The ID of the comment to be deleted
-    :param user_role: UserRole: The role of the user attempting to delete the comment
-    :return: The deleted comment object if successful, None otherwise
-    :doc-author: YourName
+        Args:
+            db (AsyncSession): The database session to use for querying.
+            comment_id (int): The id of the comment to delete.
+            user_role (Role): The role of the user making this request, used for authorization purposes.
+    
+    
+    :param db: AsyncSession: Pass the database session to the function
+    :param comment_id: int: Specify which comment to delete
+    :param user_role: Role: Check if the user has permission to delete a comment
+    :return: A comment object
+    :doc-author: Trelent
     """
     query = select(Comment).filter_by(id=comment_id)
     responce = await db.execute(query)

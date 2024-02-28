@@ -17,14 +17,26 @@ async def get_current_user(
     db: AsyncSession = Depends(get_db),
 ):
     # await repositories_users.get_picture_count(db, user) у нас нет такого метода, для доп задания было?
+    """
+    The get_current_user function is a dependency that will be called by the FastAPI framework to
+    retrieve the current user. The function will return an instance of User, which is defined in models.py.
+    
+    :param user: User: Get the current user from the database
+    :param db: AsyncSession: Get the database session
+    :param : Get the current user, and the db parameter is used to connect to the database
+    :return: The user object from the database,
+    :doc-author: Trelent
+    """
     return user
 
 
 @router.get("/{username}", response_model=UserResponse)
 async def get_user_profile(email: str, db: AsyncSession = Depends(get_db)):
     """
-    Here you can see all your profile info entering your email.
-
+    The get_user_profile function is used to get the user profile information.
+        This function will return a User object with all of the user's information.
+    
+    
     :param email: str: Get the email of the user that is logged in
     :param db: AsyncSession: Pass the database session to the repository
     :return: A user object

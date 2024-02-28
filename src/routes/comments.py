@@ -23,7 +23,15 @@ async def create_comment(
     user: User = Depends(auth_service.get_current_user),
 ):
     """
-    Create a new comment.
+    The create_comment function creates a new comment.
+    
+    :param body: CommentCreate: Get the comment body
+    :param image_id: int: Get the image id from the url
+    :param db: AsyncSession: Pass the database session to the function
+    :param user: User: Get the current user from the database
+    :param : Get the image id from the url
+    :return: A comment object
+    :doc-author: Trelent
     """
     existing_image = await repository_images.get_others_image(image_id, db, user)
     print(f"eto image{existing_image}")
@@ -46,7 +54,15 @@ async def update_comment(
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
-    Update an existing comment.
+    The update_comment function updates an existing comment.
+    
+    :param comment_id: int: Identify the comment to be updated
+    :param body: CommentCreate: Get the new content of the comment
+    :param db: AsyncSession: Pass the database connection to the function
+    :param current_user: User: Get the user who is making the request
+    :param : Get the comment id from the url
+    :return: The updated_comment object
+    :doc-author: Trelent
     """
     updated_comment = await repo_comments.update_comment(
         db, comment_id, current_user.id, body
@@ -71,10 +87,20 @@ async def delete_comment(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user),
 ):
-    """
-    Delete a comment.
-    """
 
+    """
+    The delete_comment function deletes a comment from the database.
+        The function takes in an integer representing the id of the comment to be deleted,
+        and returns a dictionary containing information about whether or not 
+        deletion was successful.
+    
+    :param comment_id: int: Specify the id of the comment to be deleted
+    :param db: AsyncSession: Pass the database connection to the function
+    :param current_user: User: Get the current user's role
+    :param : Pass the comment_id to the delete_comment function
+    :return: A comment model
+    :doc-author: Trelent
+    """
     deleted_comment = await repo_comments.delete_comment(
         db, comment_id, current_user.role
     )

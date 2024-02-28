@@ -95,10 +95,11 @@ def is_object_added(session: AsyncSession, obj):
 async def create_image(file: str, body: ImageSchema, db: AsyncSession, user: User):
     """
     The create_image function creates a new image in the database.
-
+    
+    :param file: str: Pass the file name to the function
     :param body: ImageSchema: Validate the request body
     :param db: AsyncSession: Pass the database session to the function
-    :param user:User: Get the user id from the token
+    :param user: User: Get the user id from the token
     :return: An image object
     :doc-author: Trelent
     """
@@ -129,11 +130,11 @@ async def update_image(
 ):
     """
     The update_image function updates the description of an image.
-
+    
     :param image_id: int: Specify the id of the image to be updated
     :param body: ImageUpdateSchema: Validate the request body
     :param db: AsyncSession: Pass the database session to the function
-    :param user:User: Ensure that the user is only able to update their own images
+    :param user: User: Ensure that the user is only able to update their own images
     :return: A single image
     :doc-author: Trelent
     """
@@ -152,11 +153,11 @@ async def update_image(
 async def delete_image(image_id: int, db: AsyncSession, user: User):
     """
     The delete_image function deletes an image from the database.
-
+    
     :param image_id: int: Specify the image that is to be deleted
     :param db: AsyncSession: Pass the database session to the function
-    :param user:User: Check if the user is allowed to delete the image
-    :return: The image that was deleted
+    :param user: User: Check if the user is allowed to delete the image
+    :return: None, but the return type is declared as image
     :doc-author: Trelent
     """
     stmt = select(Image).filter_by(id=image_id)

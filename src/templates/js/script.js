@@ -164,13 +164,20 @@ document.addEventListener("DOMContentLoaded", function(){
 	// /login user
 	document.querySelector('.login-form').addEventListener('submit', async function(event) {
 		event.preventDefault();
+		const accessToken = localStorage.getItem('access_token');
 		const formData = new FormData(this);
 		const formDataJSON = Object.fromEntries(formData.entries());
+		// const formData = new URLSearchParams();
+		// for (const key in formDataJSON) {
+			// formData.append(key, formDataJSON[key]);
+		// }
 
 		try {
 			const response = await fetch('http://localhost:8000/api/auth/login', {
 				method: 'POST',
+				//headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 				body: formData
+			    //body: JSON.stringify(formDataJSON)
 			});
 
 			if (response.ok) {
@@ -259,13 +266,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const file = event.target.files[0];
         const formData = new FormData();
         formData.append("file", file);
+		const formDataJSON = Object.fromEntries(formData.entries());
 
         try {
             const response = await fetch("http://localhost:8000/api/images/", {
-                method: "POST",
-                headers: {
-						'Authorization': `Bearer ${accessToken}`
-					}
+                method: 'POST',
+				headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+			    body: JSON.stringify(formDataJSON)
             });
 
             if (!response.ok) {

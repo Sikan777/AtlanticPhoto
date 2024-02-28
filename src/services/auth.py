@@ -29,11 +29,12 @@ class Auth:
         """
         The verify_password function is used to verify a plain-text password against a hashed password.
         The function returns True if the passwords match, and False otherwise.
-
+        
         :param self: Represent the instance of the class
         :param plain_password: Pass in the password that was entered by the user
         :param hashed_password: Store the hashed password from the database
         :return: A boolean value
+        :doc-author: Trelent
         """
         return self.pwd_context.verify(plain_password, hashed_password)
 
@@ -41,15 +42,16 @@ class Auth:
         """
         The get_password_hash function takes a password and returns the hashed version of it.
         The hashing algorithm is defined in the config file, which is imported into this module.
-
+        
         :param self: Represent the instance of the class
         :param password: str: Pass in the password that is being hashed
         :return: A hash of the password
+        :doc-author: Trelent
         """
         return self.pwd_context.hash(password)
 
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
-    oauth2b_scheme = HTTPBearer()
+    oauth2b_scheme = HTTPBearer(bearerFormat="api/auth/login")
     
     
 
@@ -59,14 +61,15 @@ class Auth:
     ):
         """
         The create_access_token function creates a new access token for the user.
-            The function takes in two parameters: data and expires_delta.
-            Data is a dictionary that contains information about the user, such as their username and email address.
-            Expires_delta is an optional parameter that specifies how long the access token will be valid for.
-
+                    The function takes in two parameters: data and expires_delta.
+                    Data is a dictionary that contains information about the user, such as their username and email address.
+                    Expires_delta is an optional parameter that specifies how long the access token will be valid for.
+        
         :param self: Access the class variables
         :param data: dict: Store the data that will be encoded in the access token
         :param expires_delta: Optional[float]: Set the expiration time of the token
         :return: A jwt token that is encoded with the data provided and a secret key
+        :doc-author: Trelent
         """
         to_encode = data.copy()
         if expires_delta:
@@ -87,14 +90,15 @@ class Auth:
     ):
         """
         The create_refresh_token function creates a refresh token for the user.
-            The function takes in two parameters: data and expires_delta.
-            Data is a dictionary containing the user's id, username, email address, and password hash.
-            Expires_delta is an optional parameter that sets how long before the refresh token expires.
-
+                    The function takes in two parameters: data and expires_delta.
+                    Data is a dictionary containing the user's id, username, email address, and password hash.
+                    Expires_delta is an optional parameter that sets how long before the refresh token expires.
+        
         :param self: Represent the instance of the class
         :param data: dict: Pass the user's data to be encoded
         :param expires_delta: Optional[float]: Set the expiration time of the refresh token
         :return: The encoded refresh token
+        :doc-author: Trelent
         """
         to_encode = data.copy()
         if expires_delta:
@@ -113,12 +117,13 @@ class Auth:
     async def decode_refresh_token(self, refresh_token: str):
         """
         The decode_refresh_token function is used to decode the refresh token.
-            The function takes in a refresh_token as an argument and returns the email of the user if successful.
-            If unsuccessful, it raises an HTTPException with status code 401 (Unauthorized) and detail message 'Invalid scope for token' or 'Could not validate credentials'.
-
+                    The function takes in a refresh_token as an argument and returns the email of the user if successful.
+                    If unsuccessful, it raises an HTTPException with status code 401 (Unauthorized) and detail message 'Invalid scope for token' or 'Could not validate credentials'.
+        
         :param self: Represent the instance of the class
         :param refresh_token: str: Pass in the refresh token that is sent to the server
         :return: The email of the user who is trying to refresh their access token
+        :doc-author: Trelent
         """
         try:
             payload = jwt.decode(
@@ -139,6 +144,16 @@ class Auth:
             
     #26.02 token valid
     def is_valid_token(self, token):
+        """
+        The is_valid_token function takes a token as an argument and returns True if the token is valid, False otherwise.
+        The function first tries to decode the token using jwt.decode(). If this fails, it means that either the SECRET_KEY was wrong or that 
+        the algorithm used to encode it was different from HS256 (which we specified in our call to jwt.encode()). In both cases, we return False.
+        
+        :param self: Represent the instance of the class
+        :param token: Decode the token
+        :return: Either true or false
+        :doc-author: Trelent
+        """
         try:
             # Декодирование токена
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=['HS256'])
@@ -154,18 +169,19 @@ class Auth:
 #_____________________________________________________________________________26.02 token valid__|
     # gets user by his/her access token
     async def get_current_user(
-        self, token: str = Depends(oauth2b_scheme), db: AsyncSession = Depends(get_db)
+        self, token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
     ):
         """
         The get_current_user function is a dependency that will be used in the
             get_current_active_user endpoint. It takes in a token and db session,
             decodes the JWT, checks if it's an access token or refresh token, then
             returns the user object from cache or database.
-
+        
         :param self: Access the class attributes
         :param token: str: Get the token from the header
         :param db: AsyncSession: Get the database session
-        :return: The user object which is then used to check if the user has access to a certain route
+        :return: The user object
+        :doc-author: Trelent
         """
         credentials_exception = HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

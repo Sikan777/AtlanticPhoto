@@ -155,10 +155,12 @@ async def refresh_token(
     The refresh_token function is used to refresh the access token.
         The function takes in a refresh token and returns an access_token,
         a new refresh_token, and the type of token (bearer).
-
+    
     :param credentials: HTTPAuthorizationCredentials: Get the access token from the header
     :param db: AsyncSession: Get the database session
+    :param : Get the access token from the header
     :return: A new access token and a new refresh token
+    :doc-author: Trelent
     """
     token = credentials.credentials
     print(token)
@@ -186,6 +188,17 @@ async def logout(
     credentials: HTTPAuthorizationCredentials = Depends(get_refresh_token),
     db: AsyncSession = Depends(get_db),
 ):
+    """
+    The logout function is used to logout a user.
+        It takes in the refresh token as an authorization header and deletes it from the database.
+        The function returns a message indicating that the user has been logged out successfully.
+    
+    :param credentials: HTTPAuthorizationCredentials: Get the token from the request header
+    :param db: AsyncSession: Create a connection to the database
+    :param : Get the credentials from the request header
+    :return: A dictionary
+    :doc-author: Trelent
+    """
     token = credentials.credentials
     print(token)
     email = await auth_service.decode_refresh_token(token)

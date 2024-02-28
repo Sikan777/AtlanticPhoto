@@ -9,9 +9,7 @@ from src.schemas.tags import TagSchema
 async def get_tag(tag_id: int, db: AsyncSession, user: User):
     """
     The get_tag function returns a single tag from the database.
-
-
-
+    
     :param tag_id: int: Specify the tag id
     :param db: AsyncSession: Pass the database connection to the function
     :param user: User: Specify the user who created the tag
@@ -26,10 +24,10 @@ async def get_tag(tag_id: int, db: AsyncSession, user: User):
 async def get_tag_by_name(db: AsyncSession, name):
     """
     The get_tag_by_name function returns a tag object from the database.
-
+    
     :param db: AsyncSession: Pass the database session to the function
     :param name: Filter the tag by name
-    :return: The tag with the given name
+    :return: A tag object from the database
     :doc-author: Trelent
     """
     stmt = select(Tag).filter_by(name=name)
@@ -41,11 +39,11 @@ async def get_tag_by_name(db: AsyncSession, name):
 async def create_tag(body: str, db: AsyncSession, user: User) -> Tag:
     """
     The create_tag function creates a new tag in the database.
-
-    :param body: TagSchema: Validate the request body
+    
+    :param body: str: Validate the request body
     :param db: AsyncSession: Pass the database session to the function
     :param user: User: Get the user that created the tag
-    :return: A tag object
+    :return: A tag object, but the function returns a string
     :doc-author: Trelent
     """
     existed_tag = await get_tag_by_name(db, body)
@@ -68,9 +66,7 @@ async def create_tag(body: str, db: AsyncSession, user: User) -> Tag:
 async def remove_tag(tag_id: int, db: AsyncSession, user: User) -> None:
     """
     The remove_tag function removes a tag from the database.
-
-
-
+    
     :param tag_id: int: Get the tag with that id from the database
     :param db: AsyncSession: Pass the database connection to the function
     :param user: User: Make sure that a user can only delete their own tags

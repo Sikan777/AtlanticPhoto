@@ -21,10 +21,11 @@ async def read_tag(
     The read_tag function returns a single tag from the database.
         The function takes in an integer as its argument, which is the ID of the tag to be returned.
         If no such tag exists, then a 404 error is raised.
-
+    
     :param tag_id: int: Specify the id of the tag to be updated
     :param db: Session: Pass the database session to the function
     :param user: User: Pass the current user to the function
+    :param : Specify the id of the tag to be updated
     :return: A single tag from the database
     :doc-author: Trelent
     """
@@ -76,10 +77,11 @@ async def remove_tag(
         Args:
             tag_id (int): The id of the tag to be removed.
             db (Session, optional): SQLAlchemy Session. Defaults to Depends(get_db).
-
+    
     :param tag_id: int: Specify the id of the tag to be retrieved
     :param db: Session: Pass the database session to the repository function
     :param user: User: Get the current user from the database
+    :param : Specify the id of the tag to be removed
     :return: A tag object
     :doc-author: Trelent
     """
