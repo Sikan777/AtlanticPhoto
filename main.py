@@ -1,11 +1,14 @@
+import os
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
+import uvicorn
 from src.database.db import get_db
-
+import redis.asyncio as redis
+from fastapi_limiter import FastAPILimiter
 from src.routes import auth, users, comments, images, tags, transform
-
+from src.conf.config import config
 
 app = FastAPI()
 app.include_router(auth.router, prefix="/api")
@@ -16,15 +19,22 @@ app.include_router(transform.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 
 #_limiter_________________
-# @app.on_event("startup")
-# async def startup():
-#     r = await redis.Redis(
-#         host=config.REDIS_DOMAIN,
-#         port=config.REDIS_PORT,
-#         db=0,
-#         password=config.REDIS_PASSWORD,
-#     )
-#     await FastAPILimiter.init(r)
+@app.on_event("startup")
+async def startup():
+    """
+    The startup function is called when the application starts up.
+    It's a good place to initialize things that are used by the app, such as databases or caches.
+    
+    :return: The fastapilimiter instance
+    :doc-author: Trelent
+    """
+    r = await redis.Redis(
+        host=config.REDIS_DOMAIN,
+        port=config.REDIS_PORT,
+        db=0,
+        password=config.REDIS_PASSWORD,
+    )
+    await FastAPILimiter.init(r)
 #_limiter_________________
 
 origins = ["*"]
@@ -39,10 +49,26 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
+    """
+    The read_root function returns a dictionary with the key &quot;message&quot; and value &quot;AtlanticPhoto Application&quot;.
+    
+    
+    :return: A dictionary with a message key
+    :doc-author: Trelent
+    """
     return {"message": "AtlanticPhoto Application"}
 
 @app.get("/api/healthchecker")
 async def healthchecker(db: AsyncSession = Depends(get_db)):
+    """
+    The healthchecker function is a simple function that checks if the database connection is working.
+    It does this by making a request to the database and checking if it returns any results.
+    If there are no results, then we know something went wrong with our connection.
+    
+    :param db: AsyncSession: Inject the database session into the function
+    :return: A dictionary with the message
+    :doc-author: Trelent
+    """
     try:
         # Make request
         result = await db.execute(text("SELECT 1"))
@@ -54,7 +80,5 @@ async def healthchecker(db: AsyncSession = Depends(get_db)):
         print(e)
         raise HTTPException(status_code=500, detail="Error connecting to the database")
 
-
-# @app.get("/items/{item_id}")
-# def read_item(item_id: int, q: Union[str, None] = None):
-#     return {"item_id": item_id, "q": q}
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get("PORT", 8000)), log_level="info")
