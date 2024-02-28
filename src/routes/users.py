@@ -23,11 +23,13 @@ router = APIRouter(prefix="/users", tags=["users"])
 @router.get("/{username}", response_model=UserResponse)
 async def get_user_profile(email: str, db: AsyncSession = Depends(get_db)):
     """
-    Here you can see all your profile info entering your email.
-
+    The get_user_profile function is used to get the user profile information.
+        This function will return a User object with all of the user's information.
+    
+    
     :param email: str: Get the email of the user that is logged in
     :param db: AsyncSession: Pass the database session to the repository
-    :return: A user object
+    :return: The user_info object, which is a user object
     :doc-author: Trelent
     """
     user_info = await repositories_users.get_user_by_email(email, db)

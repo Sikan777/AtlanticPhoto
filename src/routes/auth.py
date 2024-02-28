@@ -30,12 +30,14 @@ async def signup(
     The signup function creates a new user in the database.
         It takes a UserSchema object as input, and returns the newly created user.
         If an account with that email already exists, it raises an HTTPException.
-
+    
     :param body: UserSchema: Validate the request body
-    :param bt:BackgroundTasks: Add a task to the background queue
+    :param bt: BackgroundTasks: Add a task to the background queue
     :param request: Request: Get the base_url of the application
     :param db: AsyncSession: Pass the database session to the function
+    :param : Validate the request body
     :return: A user object
+    :doc-author: Trelent
     """
     exist_user = await repo_users.get_user_by_email(body.email, db)
     if exist_user:
@@ -57,10 +59,11 @@ async def login(
     The login function is used to authenticate a user.
         It takes in the email and password of the user, verifies that they are correct,
         and then returns an access token for future requests.
-
+    
     :param body: OAuth2PasswordRequestForm: Get the username and password from the request body
     :param db: AsyncSession: Pass the database session to the function
     :return: A dictionary with the access token, refresh token and the type of token
+    :doc-author: Trelent
     """
     user = await repo_users.get_user_by_email(body.username, db)
     if user is None:
@@ -94,10 +97,12 @@ async def refresh_token(
     The refresh_token function is used to refresh the access token.
         The function takes in a refresh token and returns an access_token,
         a new refresh_token, and the type of token (bearer).
-
+    
     :param credentials: HTTPAuthorizationCredentials: Get the access token from the header
     :param db: AsyncSession: Get the database session
-    :return: A new access token and a new refresh token
+    :param : Get the access token from the header
+    :return: The following:
+    :doc-author: Trelent
     """
     token = credentials.credentials
     print(token)
@@ -125,6 +130,17 @@ async def logout(
     credentials: HTTPAuthorizationCredentials = Depends(get_refresh_token),
     db: AsyncSession = Depends(get_db),
 ):
+    """
+    The logout function is used to logout a user.
+        It takes in the refresh token as an authorization header and deletes it from the database.
+        The function returns a message indicating that the user has been logged out successfully.
+    
+    :param credentials: HTTPAuthorizationCredentials: Get the refresh token from the header
+    :param db: AsyncSession: Get the database session
+    :param : Get the user's email from the token
+    :return: The following:
+    :doc-author: Trelent
+    """
     token = credentials.credentials
     print(token)
     email = await auth_service.decode_refresh_token(token)

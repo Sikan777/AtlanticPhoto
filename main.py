@@ -19,6 +19,13 @@ app.include_router(users.router, prefix="/api")
 #_limiter_________________
 @app.on_event("startup")
 async def startup():
+    """
+    The startup function is called when the application starts up.
+    It's a good place to initialize things that are used by the app, such as databases or caches.
+    
+    :return: The fastapilimiter instance
+    :doc-author: Trelent
+    """
     r = await redis.Redis(
         host=config.REDIS_DOMAIN,
         port=config.REDIS_PORT,
@@ -40,10 +47,26 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
+    """
+    The read_root function returns a dictionary with the key &quot;message&quot; and value &quot;AtlanticPhoto Application&quot;.
+    
+    
+    :return: A dictionary with a message key
+    :doc-author: Trelent
+    """
     return {"message": "AtlanticPhoto Application"}
 
 @app.get("/api/healthchecker")
 async def healthchecker(db: AsyncSession = Depends(get_db)):
+    """
+    The healthchecker function is a simple function that checks if the database connection is working.
+    It does this by making a request to the database and checking if it returns any results.
+    If there are no results, then we know something went wrong with our connection.
+    
+    :param db: AsyncSession: Inject the database session into the function
+    :return: A dictionary with the message
+    :doc-author: Trelent
+    """
     try:
         # Make request
         result = await db.execute(text("SELECT 1"))

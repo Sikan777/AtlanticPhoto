@@ -39,15 +39,16 @@ async def get_images(
 ):
     """
     The get_images function returns a list of images.
-
+    
     :param limit: int: Limit the number of images returned
     :param ge: Set a minimum value for the limit parameter
     :param le: Limit the maximum number of images that can be returned
     :param offset: int: Specify the offset of the images to be returned
-    :param ge: Set a lower limit on the value of the parameter
+    :param ge: Set a minimum value for the limit parameter
     :param db: AsyncSession: Get the database session
-    :param current_user:User: Get the current user from the database
-    :return: A list of images with the following fields:
+    :param current_user: User: Get the current user from the database
+    :param : Specify the offset of the images to be returned
+    :return: A list of images
     :doc-author: Trelent
     """
     images = await repo_images.get_images(limit, offset, db, current_user)
@@ -71,17 +72,17 @@ async def get_all_images(
 ):
     """
     The get_all_images function returns a list of all images in the database.
-        The limit and offset parameters are used to paginate the results.
-
-
+            The limit and offset parameters are used to paginate the results.
+    
     :param limit: int: Limit the number of images returned
     :param ge: Set a minimum value for the limit parameter
     :param le: Limit the number of images returned to 500
     :param offset: int: Skip a number of images
-    :param ge: Specify the minimum value of the parameter
+    :param ge: Set a minimum value for the limit parameter
     :param db: AsyncSession: Access the database
     :param user: User: Get the current user
-    :return: A list of images
+    :param : Paginate the results
+    :return: A list of all images in the database
     :doc-author: Trelent
     """
     images = await repo_images.get_all_images(limit, offset, db)  # TODO create funtion
@@ -101,11 +102,13 @@ async def get_image(
 ):
     """
     The get_image function returns a contact by ID.
-
+    
+    
     :param image_id: int: Get the image id from the url
     :param db: AsyncSession: Pass the database session to the function
-    :param current_user:User: Get the current user from the database
-    :return: A contact object
+    :param current_user: User: Get the current user from the database
+    :param : Get the image id from the url
+    :return: A contact by id
     :doc-author: Trelent
     """
     image = await repo_images.get_image(image_id, db, current_user)
@@ -130,12 +133,13 @@ async def create_image(
     """
     The create_image function creates a new image in the database.
         The function takes an ImageSchema object as input, and returns an ImageResponse object.
-
-
+    
+    :param file: UploadFile: Upload a file to the cloudinary server
     :param body: ImageSchema: Validate the request body
     :param db: AsyncSession: Get the database session
-    :param current_user:User: Get the current user from the database
-    :return: An image object
+    :param current_user: User: Get the current user from the database
+    :param : Validate the request body
+    :return: An imageresponse object
     :doc-author: Trelent
     """
     print(body)
@@ -163,13 +167,13 @@ async def update_image(
 ):
     """
     The update_image function updates an image in the database.
-        It takes a contact_id and body as input, and returns the updated image.
-
-
+            It takes a contact_id and body as input, and returns the updated image.
+    
     :param body: ImageUpdateSchema: Get the data from the request body
-    :param contact_id: int: Specify the contact id of the image that is to be deleted
+    :param image_id: int: Specify the image id of the image that is to be updated
     :param db: AsyncSession: Get the database connection
-    :param current_user:User: Get the current user from the auth_service
+    :param current_user: User: Get the current user from the auth_service
+    :param : Get the data from the request body
     :return: The updated image
     :doc-author: Trelent
     """
@@ -195,10 +199,11 @@ async def delete_image(
         The function takes in a Path parameter of image_id, which is the id of the image to be deleted.
         It also takes in a Depends parameter db, which is an AsyncSession object that allows us to access our database.
         Finally it takes in another Depends parameter current_user, which is a User object representing who made this request.
-
+    
     :param image_id: int: Get the image id from the path
-    :param db: AsyncSession: Pass the database session to the function
-    :param current_user:User: Get the user that is currently logged in
+    :param db: AsyncSession: Access the database
+    :param current_user: User: Get the user that is currently logged in
+    :param : Get the image id from the path
     :return: A dict with the following keys:
     :doc-author: Trelent
     """

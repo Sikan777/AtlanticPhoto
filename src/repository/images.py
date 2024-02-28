@@ -13,12 +13,12 @@ from src.repository.users import get_user_by_email
 async def get_images(limit: int, offset: int, db: AsyncSession, user: User):
     """
     The get_images function returns a list of images for the user.
-
+    
     :param limit: int: Limit the number of images returned
     :param offset: int: Specify the number of images to skip
     :param db: AsyncSession: Pass the database connection to the function
-    :param user:User: Filter the images by user
-    :return: A list of images
+    :param user: User: Filter the images by user
+    :return: A list of images for the user
     :doc-author: Trelent
     """
     stmt = select(Image).filter_by(user=user).offset(offset).limit(limit)
@@ -30,12 +30,11 @@ async def get_images(limit: int, offset: int, db: AsyncSession, user: User):
 async def get_all_images(limit: int, offset: int, db: AsyncSession):
     """
     The get_all_images function returns a list of all images in the database.
-
-
+    
     :param limit: int: Limit the number of images returned
     :param offset: int: Specify the number of records to skip
     :param db: AsyncSession: Pass in the database session
-    :return: All the images in the database
+    :return: A list of all images in the database
     :doc-author: Trelent
     """
     stmt = select(Image).offset(offset).limit(limit)
@@ -47,11 +46,11 @@ async def get_all_images(limit: int, offset: int, db: AsyncSession):
 async def get_image(image_id: int, db: AsyncSession, user: User):
     """
     The get_image function takes in an image_id and a user, and returns the image with that id if it exists.
-        If no such image exists, None is returned.
-
+            If no such image exists, None is returned.
+    
     :param image_id: int: Specify the image id of the image we want to retrieve
     :param db: AsyncSession: Pass the database session to the function
-    :param user:User: Get the user from the database
+    :param user: User: Get the user from the database
     :return: An image object, which is the result of a sqlalchemy query
     :doc-author: Trelent
     """
@@ -65,12 +64,12 @@ async def get_image(image_id: int, db: AsyncSession, user: User):
 
 async def get_others_image(image_id: int, db: AsyncSession, user: User):
     """
-    The get_image function takes in an image_id and a user, and returns the image with that id if it exists.
-        If no such image exists, None is returned.
-
+    The get_others_image function takes in an image_id and a user, and returns the image with that id if it exists.
+            If no such image exists, None is returned.
+    
     :param image_id: int: Specify the image id of the image we want to retrieve
     :param db: AsyncSession: Pass the database session to the function
-    :param user:User: Get the user from the database
+    :param user: User: Get the user from the database
     :return: An image object, which is the result of a sqlalchemy query
     :doc-author: Trelent
     """
@@ -82,11 +81,12 @@ async def get_others_image(image_id: int, db: AsyncSession, user: User):
 
 def is_object_added(session: AsyncSession, obj):
     """
-    Check if an object is already added to the session.
-
-    :param session: SQLAlchemy Session object
-    :param obj: Object to check
-    :return: True if the object is added to the session, False otherwise
+    The is_object_added function checks if an object is already added to the session.
+    
+    :param session: AsyncSession: Pass in the session object
+    :param obj: Check if the object is added to the session
+    :return: True if the object is added to the session, false otherwise
+    :doc-author: Trelent
     """
     return session.is_modified(obj, include_collections=False)
 
@@ -95,11 +95,12 @@ def is_object_added(session: AsyncSession, obj):
 async def create_image(file: str, body: ImageSchema, db: AsyncSession, user: User):
     """
     The create_image function creates a new image in the database.
-
+    
+    :param file: str: Pass the file name to the function
     :param body: ImageSchema: Validate the request body
     :param db: AsyncSession: Pass the database session to the function
-    :param user:User: Get the user id from the token
-    :return: An image object
+    :param user: User: Get the user id from the token
+    :return: A new image object
     :doc-author: Trelent
     """
     # image = Image(**body.model_dump(exclude_unset=True), user=user)

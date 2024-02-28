@@ -33,6 +33,10 @@ requests = "^2.31.0"
 pytest = "^8.0.1"
 httpx = "^0.26.0"
 
+
+[tool.poetry.group.dev.dependencies]
+sphinx = "^7.2.6"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
