@@ -38,6 +38,7 @@ httpx = "^0.26.0"
 
 [tool.poetry.group.dev.dependencies]
 sphinx = "^7.2.6"
+myst-parser = "^2.0.0"
 
 [build-system]
 requires = ["poetry-core"]
