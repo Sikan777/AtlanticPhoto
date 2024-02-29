@@ -25,8 +25,9 @@ async def create_comment(
     comment = Comment(
         **body.model_dump(exclude_unset=True), user=user, image_id=existing_image
     )
-    # if not is_object_added(db, comment):
-    db.add(comment)
+    if not is_object_added(db, comment):
+        db.add(comment)
+    comment = await db(comment, load=True)
     await db.commit()
     await db.refresh(comment)
     return comment
