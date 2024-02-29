@@ -14,7 +14,7 @@ async def create_comment(
 ) -> CommentResponse:
     """
     The create_comment function creates a new comment in the database.
-    
+
     :param body: CommentCreate: Pass the comment data to the function
     :param db: AsyncSession: Pass the database connection to the function
     :param existing_image: int: Pass the id of the image for which a comment is being created
@@ -25,8 +25,9 @@ async def create_comment(
     comment = Comment(
         **body.model_dump(exclude_unset=True), user=user, image_id=existing_image
     )
-    # if not is_object_added(db, comment):
-    db.add(comment)
+    if not is_object_added(db, comment):
+        db.add(comment)
+    comment = await db.merge(comment, load=True)
     await db.commit()
     await db.refresh(comment)
     return comment
@@ -37,7 +38,7 @@ async def update_comment(
 ) -> CommentResponse:
     """
     The update_comment function updates an existing comment in the database.
-    
+
     :param db: AsyncSession: Pass the database connection to the function
     :param comment_id: int: Identify the comment to be updated
     :param user_id: int: Ensure that the user who created the comment is the one updating it
@@ -61,7 +62,7 @@ async def update_comment(
 async def delete_comment(db: AsyncSession, comment_id: int, user_role: Role) -> None:
     """
     The delete_comment function deletes a comment from the database.
-    
+
     :param db: AsyncSession: Pass the database connection to the function
     :param comment_id: int: Specify the id of the comment to be deleted
     :param user_role: Role: Check if the user has permission to delete a comment
