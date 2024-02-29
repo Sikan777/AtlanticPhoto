@@ -2,7 +2,9 @@
 name = "test-project"
 version = "0.1.0"
 description = ""
-authors = ["Sikan777 <sikanbog@gmail.com>"]
+authors = ["Sikan777 <sikanbog@gmail.com>", "Zeynon <zeinabkhalilova@gmail.com>", "Olga Tsuban <tsubanolga@gmail.com>",
+        "hedgyv <hedgy85@icloud.com>", "Artem650 <utah954@gmail.com>", ]
+
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -36,6 +38,10 @@ httpx = "^0.26.0"
 
 [tool.poetry.group.dev.dependencies]
 sphinx = "^7.2.6"
+myst-parser = "^2.0.0"
+sphinx-autodoc2 = "^0.5.0"
+sphinx-copybutton = "^0.5.2"
+furo = "^2024.1.29"
 
 [build-system]
 requires = ["poetry-core"]
