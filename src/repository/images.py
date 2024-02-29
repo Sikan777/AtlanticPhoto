@@ -13,7 +13,7 @@ from src.repository.users import get_user_by_email
 async def get_images(limit: int, offset: int, db: AsyncSession, user: User):
     """
     The get_images function returns a list of images for the user.
-    
+
     :param limit: int: Limit the number of images returned
     :param offset: int: Specify the number of images to skip
     :param db: AsyncSession: Pass the database connection to the function
@@ -30,7 +30,7 @@ async def get_images(limit: int, offset: int, db: AsyncSession, user: User):
 async def get_all_images(limit: int, offset: int, db: AsyncSession):
     """
     The get_all_images function returns a list of all images in the database.
-    
+
     :param limit: int: Limit the number of images returned
     :param offset: int: Specify the number of records to skip
     :param db: AsyncSession: Pass in the database session
@@ -47,7 +47,7 @@ async def get_image(image_id: int, db: AsyncSession, user: User):
     """
     The get_image function takes in an image_id and a user, and returns the image with that id if it exists.
             If no such image exists, None is returned.
-    
+
     :param image_id: int: Specify the image id of the image we want to retrieve
     :param db: AsyncSession: Pass the database session to the function
     :param user: User: Get the user from the database
@@ -66,7 +66,7 @@ async def get_others_image(image_id: int, db: AsyncSession, user: User):
     """
     The get_others_image function takes in an image_id and a user, and returns the image with that id if it exists.
             If no such image exists, None is returned.
-    
+
     :param image_id: int: Specify the image id of the image we want to retrieve
     :param db: AsyncSession: Pass the database session to the function
     :param user: User: Get the user from the database
@@ -82,7 +82,7 @@ async def get_others_image(image_id: int, db: AsyncSession, user: User):
 def is_object_added(session: AsyncSession, obj):
     """
     The is_object_added function checks if an object is already added to the session.
-    
+
     :param session: AsyncSession: Pass in the session object
     :param obj: Check if the object is added to the session
     :return: True if the object is added to the session, false otherwise
@@ -95,7 +95,7 @@ def is_object_added(session: AsyncSession, obj):
 async def create_image(file: str, body: ImageSchema, db: AsyncSession, user: User):
     """
     The create_image function creates a new image in the database.
-    
+
     :param file: str: Pass the file name to the function
     :param body: ImageSchema: Validate the request body
     :param db: AsyncSession: Pass the database session to the function
@@ -119,7 +119,7 @@ async def create_image(file: str, body: ImageSchema, db: AsyncSession, user: Use
         image = Image(description=body.description, image=file, user=user)
     if not is_object_added(db, image):
         db.add(image)
-    image = await db(image, load=True)    
+    image = await db.merge(image, load=True)
     await db.commit()
     await db.refresh(image)
     return image

@@ -25,7 +25,7 @@ async def create_transformed_pic(
     The create_transformed_pic function is used to create a transformed picture.
         It takes in the original image id, and the transformations that are desired.
         The user must be logged in to use this function.
-    
+
     :param request: TransSchema: Get the transformation parameters from the request
     :param original_image_id: int: Get the original image from the database
     :param user: User: Get the user id of the current user
@@ -33,6 +33,15 @@ async def create_transformed_pic(
     :param : Get the image id from the url
     :return: The transformed image
     :doc-author: Trelent
+
+    Available transformation params:
+    - `width`: The width of the transformed image. 100-1920.
+    - `height`: The height of the transformed image. 100-1080.
+    - `crop`: The crop mode. `fill`, `limit`, `scale`, `thumb`, `fit`, `crop`
+    - `effect`: `grayscale`, `sepia`, `cartoonify`, `blur`, `brightness`,
+    `contrast`, `saturation`, `sharpen`
+    - `border`: `1px_solid_black`, `1px_solid_red`, `2px_dashed_blue`
+    - `angle`: 0-360
     """
     handler = TransformClass(session)
     await handler.check_access(
@@ -59,7 +68,7 @@ async def show_users_transforms(
         Args:
             user (User): The current logged in User object.
             session (AsyncSession): The database connection to use for this request.
-    
+
     :param user: User: Get the user id from the token
     :param session: AsyncSession: Get the database connection
     :param : Get the current user from the database
@@ -83,7 +92,7 @@ async def show_qr_code(
     The show_qr_code function is used to generate a QR code for the transformed picture.
         The function takes in the transformed_pic_id and user as parameters, and returns a response object containing
         the generated QR code image.
-    
+
     :param transformed_pic_id: int: Get the transformed picture from the database
     :param user: User: Get the user that is currently logged in
     :param session: AsyncSession: Pass the database session to the function
@@ -110,7 +119,7 @@ async def get_transformed_pic(
     """
     The get_transformed_pic function returns a transformed picture by its id.
         The function checks if the user has access to the picture and then returns it.
-    
+
     :param transformed_pic_id: int: Identify the transformed picture in the database
     :param user: User: Check if the user has access to the transformed picture
     :param session: AsyncSession: Pass the database session to the handler
@@ -135,7 +144,7 @@ async def update_transformed_pic(
     The update_transformed_pic function updates a transformed picture in the database.
         It takes an id of the image to be updated, and a request body containing all fields that need updating.
         The function returns the updated image object.
-    
+
     :param request: TransSchema: Get the data from the request body
     :param transformed_pic_id: int: Identify the transformed image in the database
     :param user: User: Check if the user is logged in
@@ -162,7 +171,7 @@ async def delete_transformed(
     The delete_transformed function deletes a transformed image from the database.
         It takes in an integer representing the id of the transformed image to be deleted,
         and returns a JSON object with one key: &quot;message&quot;, which contains a string describing what happened.
-    
+
     :param transformed_pic_id: int: Identify the image to be deleted
     :param user: User: Check if the user is authenticated
     :param session: AsyncSession: Pass the database session to the handler

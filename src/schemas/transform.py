@@ -42,13 +42,13 @@ class TransSchema(BaseModel):
     # here and then we validate width, height and angle
     @validator("width")
     def check_width(cls, v):
-        if not 0 < v <= 1920:
+        if not 100 < v <= 1920:
             raise ValueError("Width must be between 1 and 1920")
         return v
 
     @validator("height")
     def check_height(cls, v):
-        if not 0 < v <= 1080:
+        if not 100 < v <= 1080:
             raise ValueError("Height must be between 1 and 1080")
         return v
 
