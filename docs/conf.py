@@ -7,6 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import sys
 import os
+import myst_parser
 
 sys.path.append(os.path.abspath(".."))
 
