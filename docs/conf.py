@@ -8,7 +8,7 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath("../.."))
+sys.path.append(os.path.abspath(".."))
 
 project = "AtlanticPhoto"
 copyright = "2024, PyNinjaTurtles"
@@ -18,16 +18,8 @@ release = "29.02.2024"
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["autodoc2", "myst_parser", "sphinx_copybutton"]
+extensions = ["sphinx.ext.autodoc", "myst_parser", "sphinx_copybutton"]
 
-autodoc2_packages = [
-    "../../src/routes",
-    "../../src/repository",
-    "../../src/services",
-    "../../src/database",
-    "../../src/entity",
-    "../../src/schemas",
-]
 
 myst_enable_extensions = ["colon_fence"]
 myst_heading_anchors = 3
