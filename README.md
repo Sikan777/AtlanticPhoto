@@ -203,8 +203,7 @@ _and fill in the information you need_
 
 ### Additional information
 
-- [Documentation](https://pythongram.readthedocs.io/en/latest/)
-- [Swagger documentation(soon)](https://python-gram-secure-organization.koyeb.app/docs)
+- [Documentation](https://atlanticphoto.readthedocs.io/en/latest/)
 - [GitHub](https://github.com/Sikan777/AtlanticPhoto)
 
 ## License
