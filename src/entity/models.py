@@ -47,7 +47,6 @@ class Tag(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     user: Mapped["User"] = relationship("User", backref="contacts", lazy="joined")
 
-    # Ждем pictures
     images: Mapped[List["Image"]] = relationship(
         secondary=image_association, back_populates="tags", lazy="joined"
     )

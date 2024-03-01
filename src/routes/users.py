@@ -22,21 +22,13 @@ async def get_current_user(
     
     :param user: User: Get the current user from the auth_service
     :param db: AsyncSession: Get a database session
-    :param : Get the current user from the database
+    :param : Get the current user from the auth_service
     :return: The current user, which is stored in the database
     :doc-author: Trelent
     """
     await repositories_users.get_picture_count(db, user)
-    """
-    The get_current_user function is a dependency that will be called by FastAPI to get the current user.
-    It uses the auth_service.get_current_user function, which we defined above, and also depends on a database session.
     
-    :param user: User: Get the user object from the auth_service
-    :param db: AsyncSession: Get a database session
-    :param : Get the current user from the database
-    :return: The current user, which is stored in the database
-    :doc-author: Trelent
-    """
+
     return user
 
 
@@ -63,17 +55,31 @@ async def get_user_profile(email: str, db: AsyncSession = Depends(get_db)):
     return user_info
 
 
-# @router.patch("/me", response_model=UserResponse)
-# async def update_own_profile(
-#     user_update: UserUpdate,
-#     user: User = Depends(auth_service.get_current_user),
-#     db: AsyncSession = Depends(get_db),
-# ):
-#     updated_user = await repositories_users.update_user(
-#         user.email, user_update, db
-#     )  # Что здесь должно быть? Где метод апдейт юзер?
+@router.patch("/me", response_model=UserResponse)
+async def update_own_profile(
+    user_update: UserUpdate,
+    user: User = Depends(auth_service.get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    The update_own_profile function updates the user's own profile.
+        Args:
+            user_update (UserUpdate): The updated information for the user.
+            user (User, optional): The current logged in User object. Defaults to Depends(auth_service.get_current_user).
+            db (AsyncSession, optional): An async database session object used to query the database with SQLAlchemy Core statements. Defaults to Depends(get_db).
+    
+    :param user_update: UserUpdate: Pass the data that will be used to update the user
+    :param user: User: Get the current user
+    :param db: AsyncSession: Pass the database session to the function
+    :param : Get the current user from the database
+    :return: The updated user
+    :doc-author: Trelent
+    """
+    updated_user = await repositories_users.update_user(
+        user.email, user_update.new_email, db
+    )  
 
-#     return updated_user
+    return updated_user
 
 
 # # маршрут для заборони користувачам лише адмінам
