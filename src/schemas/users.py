@@ -45,6 +45,5 @@ class AnotherUsers(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
+    new_email: EmailStr
+

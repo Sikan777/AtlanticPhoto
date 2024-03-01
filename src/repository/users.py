@@ -139,6 +139,27 @@ async def get_picture_count(db: AsyncSession, user: User):
     user.picture_count = picture_count
     await db.commit()
     await db.refresh(user)
+    
+    
+async def update_user(email: str, new_email: str, db: AsyncSession):
+    """
+    The update_user function updates a user's email address.
+    
+    :param email: str: Identify the user to update
+    :param new_email: str: Update the email of the user
+    :param db: AsyncSession: Pass in the database session
+    :return: A user object
+    :doc-author: Trelent
+    """
+    statement = select(User).filter_by(email=email)
+    user = await db.execute(statement)
+    user = user.unique().scalar_one_or_none()
+    user.email = new_email
+    
+    await db.commit()
+    await db.refresh(user)
+
+    return user
 
 
 # Comfirm the email of the user
