@@ -11,13 +11,33 @@ from src.services.auth import auth_service
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-# @router.get("/me", response_model=UserResponse)
-# async def get_current_user(
-#     user: User = Depends(auth_service.get_current_user),
-#     db: AsyncSession = Depends(get_db),
-# ):
-#     # await repositories_users.get_picture_count(db, user) у нас нет такого метода, для доп задания было?
-#     return user
+@router.get("/me", response_model=UserResponse)
+async def get_current_user(
+    user: User = Depends(auth_service.get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    The get_current_user function is a dependency that will be called by FastAPI to get the current user.
+    It uses the auth_service.get_current_user function, which we defined above, and also depends on a database session.
+    
+    :param user: User: Get the current user from the auth_service
+    :param db: AsyncSession: Get a database session
+    :param : Get the current user from the database
+    :return: The current user, which is stored in the database
+    :doc-author: Trelent
+    """
+    await repositories_users.get_picture_count(db, user)
+    """
+    The get_current_user function is a dependency that will be called by FastAPI to get the current user.
+    It uses the auth_service.get_current_user function, which we defined above, and also depends on a database session.
+    
+    :param user: User: Get the user object from the auth_service
+    :param db: AsyncSession: Get a database session
+    :param : Get the current user from the database
+    :return: The current user, which is stored in the database
+    :doc-author: Trelent
+    """
+    return user
 
 
 @router.get("/{username}", response_model=UserResponse)
