@@ -31,18 +31,20 @@ image_association = Table(
     # Column("comment_id", Integer, ForeignKey("comments.id")), I commented it because comment and image has one_to_many bind
 )
 
-
-class Tag(Base):
-    __tablename__ = "tags"
+class GeneralAttributes(Base):
+    __abstract__ = True
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
-
     created_at: Mapped[date] = mapped_column(
         "created_at", DateTime, default=func.now(), nullable=True
     )
     updated_at: Mapped[date] = mapped_column(
         "updated_at", DateTime, default=func.now(), onupdate=func.now(), nullable=True
     )
+
+class Tag(GeneralAttributes):
+    __tablename__ = "tags"
+    
+    name: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
 
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     user: Mapped["User"] = relationship("User", backref="contacts", lazy="joined")
@@ -52,17 +54,12 @@ class Tag(Base):
     )
 
 
-class Image(Base):
+class Image(GeneralAttributes):
     __tablename__ = "images"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    
     description: Mapped[str] = mapped_column(String(150), nullable=False, index=True)
     image: Mapped[str] = mapped_column(String(255), nullable=False)
-    created_at: Mapped[date] = mapped_column(
-        "created_at", DateTime, default=func.now(), nullable=True
-    )
-    updated_at: Mapped[date] = mapped_column(
-        "updated_at", DateTime, default=func.now(), onupdate=func.now(), nullable=True
-    )
+    
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     user: Mapped["User"] = relationship("User", backref="image", lazy="joined")
     tags: Mapped[List["Tag"]] = relationship(
@@ -84,18 +81,15 @@ class Role(enum.Enum):
 
 
 # Use the class for User model - representing of model User
-class User(Base):
+class User(GeneralAttributes):
     __tablename__ = "users"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    
     username: Mapped[str] = mapped_column(String(50))
     email: Mapped[str] = mapped_column(String(150), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
     avatar: Mapped[str] = mapped_column(String(255), nullable=True)
     refresh_token: Mapped[str] = mapped_column(String(255), nullable=True)
-    created_at: Mapped[date] = mapped_column("created_at", DateTime, default=func.now())
-    updated_at: Mapped[date] = mapped_column(
-        "updated_at", DateTime, default=func.now(), onupdate=func.now()
-    )
+    
     status: Mapped[bool] = mapped_column("status", Boolean, default=True)
     role: Mapped[Enum] = mapped_column(
         "role", Enum(Role), default=Role.user, nullable=True
@@ -105,19 +99,14 @@ class User(Base):
     )  # 2402_picture_count
 
 
-class Comment(Base):
+class Comment(GeneralAttributes):
     __tablename__ = "comments"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    
 
     # photo_id: Mapped[int] = mapped_column(Integer, ForeignKey('photos.id'))#commented
     comment: Mapped[str] = mapped_column(String(255), index=True)
 
-    created_at: Mapped[date] = mapped_column(
-        "created_at", DateTime, default=func.now(), nullable=True
-    )
-    updated_at: Mapped[date] = mapped_column(
-        "updated_at", DateTime, default=func.now(), onupdate=func.now(), nullable=True
-    )
+    
     image_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("images.id"), nullable=False
     )
@@ -128,17 +117,12 @@ class Comment(Base):
     image = relationship("Image", back_populates="comments")
 
 
-class TransformedPic(Base):
+class TransformedPic(GeneralAttributes):
     __tablename__ = "transformed_pics"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    
     public_id: Mapped[str] = mapped_column(String, nullable=False)
     url: Mapped[str] = mapped_column(String(255), nullable=False)
     original_pic_id: Mapped[int] = mapped_column(ForeignKey("images.id"), nullable=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
-    created_at: Mapped[date] = mapped_column(
-        "created_at", DateTime, default=func.now(), nullable=True
-    )
-    updated_at: Mapped[date] = mapped_column(
-        "updated_at", DateTime, default=func.now(), onupdate=func.now()
-    )
+    
     original_picture = relationship("Image", back_populates="transformed_pics")
