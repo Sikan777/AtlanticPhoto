@@ -287,20 +287,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			formData.append("description", description);
 			
 			console.log(formData)
-			console.log(formData.get("description"));
+			//console.log(formData.get("description"));
 			console.log(formData.get("file"));
 			
 			descriptionInput.value = "";
 			
-			const formDataJSON = Object.fromEntries(formData.entries());
+			//const formDataJSON = Object.fromEntries(formData.entries());
 			
 
 			try {
-				const response = await fetch("http://localhost:8000/api/images/", {
+				const response = await fetch(`http://localhost:8000/api/images/?description=${description}`, {
 					method: 'POST',
 					headers: {
 					'Authorization': `Bearer ${access_token}` // Включаем access token в заголовок Authorization
+					//'Content-Type': 'multipart/form-data'
 					},
+					'accept': 'application/json',
 					body: formData
 					//body: JSON.stringify(formDataJSON)
 				});
@@ -308,9 +310,16 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (!response.ok) {
 					throw new Error("Failed to upload image");
 				}
+				// else {
+					// const data = await response.json();
+					// return data.secure_url; // возвращает URL загруженного изображения
+				// }
+				
 
 				const imageData = await response.json();
-				const imageUrl = imageData.url;
+				const imageUrl = imageData.image;
+				console.log(imageData)
+				console.log(imageUrl)
 
 				// Create image element and append it to the uploaded images section
 				const imageElement = document.createElement("img");
